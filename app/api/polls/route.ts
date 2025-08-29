@@ -52,16 +52,16 @@ let nextId = 1;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate the request body
     const validatedData = createPollSchema.parse(body);
-    
+
     // Process questions and create options
     const processedQuestions = validatedData.questions.map((question, qIndex) => {
       const questionId = `q_${nextId}_${qIndex}`;
-      
+
       let options: Option[] = [];
-      
+
       // Create options for choice-based questions
       if (question.type === "single-choice" || question.type === "multiple-choice") {
         options = (question.options || []).map((optionText, oIndex) => ({
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
           votes: 0,
         }));
       }
-      
+
       return {
         id: questionId,
         text: question.text,
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
         allowMultiple: question.allowMultiple || false,
       };
     });
-    
+
     // Create the poll object
     const newPoll: Poll = {
       id: `poll_${nextId}`,
@@ -95,13 +95,13 @@ export async function POST(request: NextRequest) {
       createdBy: "anonymous", // Replace with actual user ID when auth is implemented
       totalVotes: 0,
     };
-    
+
     // Store the poll (in a real app, this would be saved to a database)
     polls.push(newPoll);
     nextId++;
-    
+
     console.log("Poll created successfully:", newPoll);
-    
+
     return NextResponse.json(
       {
         success: true,
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("Error creating poll:", error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     return NextResponse.json(
       {
         success: false,

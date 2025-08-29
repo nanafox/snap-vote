@@ -145,7 +145,7 @@ export function CreatePollForm() {
       router.push("/dashboard/polls");
     } catch (error) {
       console.error("Error creating poll:", error);
-      
+
       // Show error message
       toast({
         title: "Error",
@@ -384,7 +384,7 @@ export function CreatePollForm() {
                             // Reset options when changing to/from choice types
                             const newType = value as QuestionType;
                             const currentOptions = form.getValues(`questions.${questionIndex}.options`) || [];
-                            
+
                             if (newType === "single-choice" || newType === "multiple-choice") {
                               // Ensure we have at least 2 empty options for choice questions
                               if (currentOptions.length < 2) {

@@ -25,7 +25,7 @@ export default function PollsPage() {
       try {
         const response = await fetch("/api/polls");
         const result = await response.json();
-        
+
         if (result.success) {
           setPolls(result.polls);
         } else {
