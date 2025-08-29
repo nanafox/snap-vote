@@ -30,13 +30,13 @@ export function Sidebar() {
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="flex items-center space-x-2 p-6 border-b">
+      <div className="flex items-center space-x-2 p-6 border-b bg-background">
         <BarChart3 className="h-8 w-8 text-primary" />
         <span className="text-2xl font-bold text-foreground">SnapVote</span>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {navigation.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -60,7 +60,7 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t">
+      <div className="p-4 border-t bg-background">
         <div className="text-sm text-muted-foreground text-center">
           <p>SnapVote Dashboard</p>
           <p className="text-xs mt-1">v1.0.0</p>
@@ -72,7 +72,7 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex w-64 bg-background border-r flex-col">
+      <div className="hidden md:flex w-64 bg-background border-r flex-col fixed h-full z-30">
         <SidebarContent />
       </div>
 

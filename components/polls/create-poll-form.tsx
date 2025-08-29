@@ -37,22 +37,34 @@ import {
   Type,
   Star,
   Eye,
-  EyeOff
+  EyeOff,
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import type { QuestionType } from "@/types";
 
 const questionSchema = z.object({
   text: z.string().min(1, "Question text is required"),
   type: z.enum(["single-choice", "multiple-choice", "text", "rating"]),
-  options: z.array(z.string().min(1, "Option text is required")).min(2, "At least 2 options required").optional(),
+  options: z.array(z.string().min(1, "Option text is required")).optional(),
   required: z.boolean().default(true),
   allowMultiple: z.boolean().optional(),
+}).refine((data) => {
+  // Validate that choice questions have at least 2 options
+  if (data.type === "single-choice" || data.type === "multiple-choice") {
+    return data.options && data.options.length >= 2;
+  }
+  return true;
+}, {
+  message: "Choice questions require at least 2 options",
+  path: ["options"]
 });
 
 const pollSchema = z.object({
   title: z.string().min(1, "Poll title is required"),
   description: z.string().optional(),
-  questions: z.array(questionSchema).min(1, "At least one question is required"),
+  questions: z
+    .array(questionSchema)
+    .min(1, "At least one question is required"),
   expiresAt: z.string().optional(),
   isPublic: z.boolean().default(true),
 });
@@ -62,20 +74,21 @@ type PollFormData = z.infer<typeof pollSchema>;
 const questionTypeIcons = {
   "single-choice": Circle,
   "multiple-choice": CheckSquare,
-  "text": Type,
-  "rating": Star,
+  text: Type,
+  rating: Star,
 };
 
 const questionTypeLabels = {
   "single-choice": "Single Choice",
   "multiple-choice": "Multiple Choice",
-  "text": "Text Response",
-  "rating": "Rating Scale",
+  text: "Text Response",
+  rating: "Rating Scale",
 };
 
 export function CreatePollForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const form = useForm<PollFormData>({
     resolver: zodResolver(pollSchema),
@@ -88,8 +101,9 @@ export function CreatePollForm() {
           type: "single-choice",
           options: ["", ""],
           required: true,
-        }
+        },
       ],
+      expiresAt: "",
       isPublic: true,
     },
   });
@@ -102,28 +116,56 @@ export function CreatePollForm() {
   const onSubmit = async (data: PollFormData) => {
     setIsSubmitting(true);
     try {
-      // TODO: Implement actual poll creation API call
       console.log("Creating poll:", data);
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Call the API to create the poll
+      const response = await fetch("/api/polls", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.message || "Failed to create poll");
+      }
+
+      console.log("Poll created successfully:", result.poll);
+
+      // Show success message
+      toast({
+        title: "Success!",
+        description: "Your poll has been created successfully.",
+      });
 
       // Redirect to dashboard
       router.push("/dashboard/polls");
     } catch (error) {
       console.error("Error creating poll:", error);
+      
+      // Show error message
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to create poll. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const addQuestion = () => {
-    append({
-      text: "",
-      type: "single-choice",
-      options: ["", ""],
-      required: true,
-    });
+    if (fields.length < 20) { // Limit to 20 questions max
+      append({
+        text: "",
+        type: "single-choice",
+        options: ["", ""],
+        required: true,
+      });
+    }
   };
 
   const removeQuestion = (index: number) => {
@@ -133,12 +175,19 @@ export function CreatePollForm() {
   };
 
   const addOption = (questionIndex: number) => {
-    const currentOptions = form.getValues(`questions.${questionIndex}.options`) || [];
-    form.setValue(`questions.${questionIndex}.options`, [...currentOptions, ""]);
+    const currentOptions =
+      form.getValues(`questions.${questionIndex}.options`) || [];
+    if (currentOptions.length < 10) { // Limit to 10 options max
+      form.setValue(`questions.${questionIndex}.options`, [
+        ...currentOptions,
+        "",
+      ]);
+    }
   };
 
   const removeOption = (questionIndex: number, optionIndex: number) => {
-    const currentOptions = form.getValues(`questions.${questionIndex}.options`) || [];
+    const currentOptions =
+      form.getValues(`questions.${questionIndex}.options`) || [];
     if (currentOptions.length > 2) {
       const newOptions = currentOptions.filter((_, i) => i !== optionIndex);
       form.setValue(`questions.${questionIndex}.options`, newOptions);
@@ -155,7 +204,9 @@ export function CreatePollForm() {
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-base font-medium">Poll Title *</FormLabel>
+                <FormLabel className="text-base font-medium">
+                  Poll Title *
+                </FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter a clear, engaging title for your poll"
@@ -173,7 +224,9 @@ export function CreatePollForm() {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-base font-medium">Description (Optional)</FormLabel>
+                <FormLabel className="text-base font-medium">
+                  Description (Optional)
+                </FormLabel>
                 <FormControl>
                   <Textarea
                     placeholder="Provide additional context or instructions for your poll"
@@ -182,7 +235,8 @@ export function CreatePollForm() {
                   />
                 </FormControl>
                 <FormDescription>
-                  Help participants understand the purpose and context of your poll
+                  Help participants understand the purpose and context of your
+                  poll
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -195,11 +249,17 @@ export function CreatePollForm() {
               name="expiresAt"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base font-medium">Expiration Date (Optional)</FormLabel>
+                  <FormLabel className="text-base font-medium">
+                    Expiration Date (Optional)
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="datetime-local"
-                      {...field}
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
                     />
                   </FormControl>
                   <FormDescription>
@@ -223,15 +283,18 @@ export function CreatePollForm() {
                       />
                     </FormControl>
                     <FormLabel className="text-base font-medium flex items-center space-x-2">
-                      {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                      {field.value ? (
+                        <Eye className="h-4 w-4" />
+                      ) : (
+                        <EyeOff className="h-4 w-4" />
+                      )}
                       <span>Public Poll</span>
                     </FormLabel>
                   </div>
                   <FormDescription>
                     {field.value
                       ? "Anyone with the link can view and vote"
-                      : "Only authenticated users can participate"
-                    }
+                      : "Only authenticated users can participate"}
                   </FormDescription>
                 </FormItem>
               )}
@@ -247,10 +310,11 @@ export function CreatePollForm() {
               type="button"
               variant="outline"
               onClick={addQuestion}
+              disabled={fields.length >= 20}
               className="flex items-center space-x-2"
             >
               <Plus className="h-4 w-4" />
-              <span>Add Question</span>
+              <span>Add Question ({fields.length}/20)</span>
             </Button>
           </div>
 
@@ -259,12 +323,18 @@ export function CreatePollForm() {
             const IconComponent = questionTypeIcons[questionType];
 
             return (
-              <Card key={field.id} className="border-2 border-dashed border-muted hover:border-primary/50 transition-colors">
+              <Card
+                key={field.id}
+                className="border-2 border-dashed border-muted hover:border-primary/50 transition-colors"
+              >
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <GripVertical className="h-4 w-4 text-muted-foreground" />
-                      <Badge variant="secondary" className="flex items-center space-x-1">
+                      <Badge
+                        variant="secondary"
+                        className="flex items-center space-x-1"
+                      >
                         <IconComponent className="h-3 w-3" />
                         <span>{questionTypeLabels[questionType]}</span>
                       </Badge>
@@ -308,24 +378,45 @@ export function CreatePollForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Question Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            // Reset options when changing to/from choice types
+                            const newType = value as QuestionType;
+                            const currentOptions = form.getValues(`questions.${questionIndex}.options`) || [];
+                            
+                            if (newType === "single-choice" || newType === "multiple-choice") {
+                              // Ensure we have at least 2 empty options for choice questions
+                              if (currentOptions.length < 2) {
+                                form.setValue(`questions.${questionIndex}.options`, ["", ""]);
+                              }
+                            } else {
+                              // Clear options for non-choice questions
+                              form.setValue(`questions.${questionIndex}.options`, []);
+                            }
+                          }}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select question type" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {Object.entries(questionTypeLabels).map(([value, label]) => {
-                              const Icon = questionTypeIcons[value as QuestionType];
-                              return (
-                                <SelectItem key={value} value={value}>
-                                  <div className="flex items-center space-x-2">
-                                    <Icon className="h-4 w-4" />
-                                    <span>{label}</span>
-                                  </div>
-                                </SelectItem>
-                              );
-                            })}
+                            {Object.entries(questionTypeLabels).map(
+                              ([value, label]) => {
+                                const Icon =
+                                  questionTypeIcons[value as QuestionType];
+                                return (
+                                  <SelectItem key={value} value={value}>
+                                    <div className="flex items-center space-x-2">
+                                      <Icon className="h-4 w-4" />
+                                      <span>{label}</span>
+                                    </div>
+                                  </SelectItem>
+                                );
+                              },
+                            )}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -334,7 +425,8 @@ export function CreatePollForm() {
                   />
 
                   {/* Options for choice-based questions */}
-                  {(questionType === "single-choice" || questionType === "multiple-choice") && (
+                  {(questionType === "single-choice" ||
+                    questionType === "multiple-choice") && (
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <Label>Answer Options</Label>
@@ -343,55 +435,70 @@ export function CreatePollForm() {
                           variant="outline"
                           size="sm"
                           onClick={() => addOption(questionIndex)}
+                          disabled={(form.watch(`questions.${questionIndex}.options`) || []).length >= 10}
                         >
                           <Plus className="h-3 w-3 mr-1" />
                           Add Option
                         </Button>
                       </div>
 
-                      {form.watch(`questions.${questionIndex}.options`)?.map((_, optionIndex) => (
-                        <div key={optionIndex} className="flex items-center space-x-2">
-                          <div className="flex-shrink-0">
-                            {questionType === "single-choice" ? (
-                              <Circle className="h-4 w-4 text-muted-foreground" />
-                            ) : (
-                              <CheckSquare className="h-4 w-4 text-muted-foreground" />
-                            )}
-                          </div>
-                          <FormField
-                            control={form.control}
-                            name={`questions.${questionIndex}.options.${optionIndex}`}
-                            render={({ field }) => (
-                              <FormItem className="flex-1">
-                                <FormControl>
-                                  <Input
-                                    placeholder={`Option ${optionIndex + 1}`}
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeOption(questionIndex, optionIndex)}
-                            disabled={(form.watch(`questions.${questionIndex}.options`) || []).length <= 2}
-                            className="text-destructive hover:text-destructive"
+                      {form
+                        .watch(`questions.${questionIndex}.options`)
+                        ?.map((_, optionIndex) => (
+                          <div
+                            key={optionIndex}
+                            className="flex items-center space-x-2"
                           >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      ))}
+                            <div className="flex-shrink-0">
+                              {questionType === "single-choice" ? (
+                                <Circle className="h-4 w-4 text-muted-foreground" />
+                              ) : (
+                                <CheckSquare className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </div>
+                            <FormField
+                              control={form.control}
+                              name={`questions.${questionIndex}.options.${optionIndex}`}
+                              render={({ field }) => (
+                                <FormItem className="flex-1">
+                                  <FormControl>
+                                    <Input
+                                      placeholder={`Option ${optionIndex + 1}`}
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                removeOption(questionIndex, optionIndex)
+                              }
+                              disabled={
+                                (
+                                  form.watch(
+                                    `questions.${questionIndex}.options`,
+                                  ) || []
+                                ).length <= 2
+                              }
+                              className="text-destructive hover:text-destructive"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ))}
                     </div>
                   )}
 
                   {questionType === "rating" && (
                     <div className="p-4 bg-muted/50 rounded-lg">
                       <p className="text-sm text-muted-foreground">
-                        Rating questions will display a 1-5 star rating scale for responses.
+                        Rating questions will display a 1-5 star rating scale
+                        for responses.
                       </p>
                     </div>
                   )}
@@ -399,7 +506,8 @@ export function CreatePollForm() {
                   {questionType === "text" && (
                     <div className="p-4 bg-muted/50 rounded-lg">
                       <p className="text-sm text-muted-foreground">
-                        Text questions allow participants to provide open-ended responses.
+                        Text questions allow participants to provide open-ended
+                        responses.
                       </p>
                     </div>
                   )}
@@ -429,19 +537,11 @@ export function CreatePollForm() {
 
         {/* Submit Section */}
         <div className="flex items-center justify-between pt-6 border-t">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.back()}
-          >
+          <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
           </Button>
           <div className="flex items-center space-x-3">
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isSubmitting}
-            >
+            <Button type="button" variant="outline" disabled={isSubmitting}>
               Save as Draft
             </Button>
             <Button

@@ -1,103 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PollList } from "@/components/polls/poll-list";
 import { CreatePollButton } from "@/components/polls/create-poll-button";
 import { PollFilters } from "@/components/polls/poll-filters";
-import { Search, Filter } from "lucide-react";
-
-// Mock data - replace with real data later
-const mockPolls = [
-  {
-    id: "1",
-    title: "Team Lunch Preferences",
-    description: "Help us decide where to go for our next team lunch. We want to make sure everyone's dietary preferences are considered.",
-    questions: [
-      { id: "1", text: "Which restaurant do you prefer?", type: "single-choice" as const, options: [], required: true },
-      { id: "2", text: "Any dietary restrictions?", type: "multiple-choice" as const, options: [], required: false },
-    ],
-    createdAt: new Date("2024-01-15"),
-    updatedAt: new Date("2024-01-15"),
-    expiresAt: new Date("2024-01-20"),
-    isActive: true,
-    isPublic: true,
-    createdBy: "user1",
-    totalVotes: 24,
-  },
-  {
-    id: "2",
-    title: "Office Meeting Room Booking System",
-    description: "Which time slot works best for the all-hands meeting? We're trying to find a time that works for everyone across different time zones.",
-    questions: [
-      { id: "3", text: "Preferred meeting time", type: "single-choice" as const, options: [], required: true },
-    ],
-    createdAt: new Date("2024-01-14"),
-    updatedAt: new Date("2024-01-14"),
-    isActive: true,
-    isPublic: false,
-    createdBy: "user1",
-    totalVotes: 18,
-  },
-  {
-    id: "3",
-    title: "Company Event Theme Selection",
-    description: "Vote for the theme of our annual company event. This will help us plan decorations, activities, and catering.",
-    questions: [
-      { id: "4", text: "Event theme preference", type: "single-choice" as const, options: [], required: true },
-      { id: "5", text: "Additional suggestions", type: "text" as const, options: [], required: false },
-    ],
-    createdAt: new Date("2024-01-10"),
-    updatedAt: new Date("2024-01-12"),
-    expiresAt: new Date("2024-01-15"),
-    isActive: false,
-    isPublic: true,
-    createdBy: "user1",
-    totalVotes: 45,
-  },
-  {
-    id: "4",
-    title: "Product Feature Prioritization",
-    description: "Help us prioritize which features to work on next quarter. Your input will directly influence our development roadmap.",
-    questions: [
-      { id: "6", text: "Top priority feature", type: "single-choice" as const, options: [], required: true },
-      { id: "7", text: "Rate feature importance", type: "rating" as const, options: [], required: true },
-    ],
-    createdAt: new Date("2024-01-12"),
-    updatedAt: new Date("2024-01-13"),
-    isActive: true,
-    isPublic: false,
-    createdBy: "user1",
-    totalVotes: 32,
-  },
-  {
-    id: "5",
-    title: "Remote Work Preferences Survey",
-    description: "Understanding team preferences for remote work policies and office arrangements going forward.",
-    questions: [
-      { id: "8", text: "Preferred work arrangement", type: "single-choice" as const, options: [], required: true },
-      { id: "9", text: "Office days preference", type: "multiple-choice" as const, options: [], required: false },
-    ],
-    createdAt: new Date("2024-01-08"),
-    updatedAt: new Date("2024-01-09"),
-    isActive: true,
-    isPublic: true,
-    createdBy: "user1",
-    totalVotes: 67,
-  },
-];
+import { Search, Filter, Loader2 } from "lucide-react";
+import type { Poll } from "@/types";
 
 export default function PollsPage() {
+  const [polls, setPolls] = useState<Poll[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     status: "all",
     sortBy: "newest",
   });
 
+  // Fetch polls from API
+  useEffect(() => {
+    const fetchPolls = async () => {
+      try {
+        const response = await fetch("/api/polls");
+        const result = await response.json();
+        
+        if (result.success) {
+          setPolls(result.polls);
+        } else {
+          console.error("Failed to fetch polls:", result.message);
+        }
+      } catch (error) {
+        console.error("Error fetching polls:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPolls();
+  }, []);
+
   // Filter and sort polls based on current filters
-  const filteredPolls = mockPolls
+  const filteredPolls = polls
     .filter(poll => {
       const matchesSearch = poll.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           poll.description?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -120,6 +65,17 @@ export default function PollsPage() {
           return 0;
       }
     });
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <span className="ml-2 text-muted-foreground">Loading polls...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -172,7 +128,7 @@ export default function PollsPage() {
       {/* Results Summary */}
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
-          Showing {filteredPolls.length} of {mockPolls.length} polls
+          Showing {filteredPolls.length} of {polls.length} polls
           {searchQuery && (
             <span> matching &quot;{searchQuery}&quot;</span>
           )}
@@ -193,6 +149,20 @@ export default function PollsPage() {
       <PollList polls={filteredPolls} />
 
       {/* Empty State */}
+      {polls.length === 0 && !searchQuery && (
+        <Card className="border-0 shadow-md">
+          <CardContent className="text-center py-12">
+            <Search className="mx-auto h-12 w-12 text-muted-foreground" />
+            <h3 className="mt-4 text-lg font-medium">No polls yet</h3>
+            <p className="mt-2 text-muted-foreground">
+              Get started by creating your first poll.
+            </p>
+            <CreatePollButton />
+          </CardContent>
+        </Card>
+      )}
+
+      {/* No Search Results */}
       {filteredPolls.length === 0 && searchQuery && (
         <Card className="border-0 shadow-md">
           <CardContent className="text-center py-12">

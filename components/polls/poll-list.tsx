@@ -30,6 +30,10 @@ interface PollListProps {
 
 export function PollList({ polls, showActions = true }: PollListProps) {
   const formatDate = (date: Date) => {
+      if (!(date instanceof Date)) {
+        date = new Date(date);
+      }
+
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
       month: 'short',
