@@ -10,9 +10,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/auth";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 export function Header() {
+  const { session } = useAuth();
+  const router = useRouter();
+  const supabase = createClient();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+  };
+
   return (
     <header className="bg-background border-b px-6 py-4">
       <div className="flex items-center justify-between">
@@ -45,6 +58,12 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">
+              {session && (
+                <>
+                  <DropdownMenuLabel>{session.user.email}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                </>
+              )}
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
                 Profile
@@ -53,7 +72,7 @@ export function Header() {
                 Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
                 Sign out
               </DropdownMenuItem>
             </DropdownMenuContent>

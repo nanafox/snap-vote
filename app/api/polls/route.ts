@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { CreatePollData } from "@/types";
 
 // Validation schema for poll creation
 const createPollSchema = z.object({
@@ -17,8 +16,37 @@ const createPollSchema = z.object({
   isPublic: z.boolean().default(true),
 });
 
+interface Option {
+  id: string;
+  text: string;
+  votes: number;
+}
+
+interface Question {
+  id: string;
+  text: string;
+  type: "single-choice" | "multiple-choice" | "text" | "rating";
+  options: Option[];
+  required: boolean;
+  allowMultiple: boolean;
+}
+
+interface Poll {
+  id: string;
+  title: string;
+  description: string;
+  questions: Question[];
+  createdAt: Date;
+  updatedAt: Date;
+  expiresAt: Date | null;
+  isActive: boolean;
+  isPublic: boolean;
+  createdBy: string;
+  totalVotes: number;
+}
+
 // In-memory storage for polls (replace with actual database later)
-let polls: any[] = [];
+const polls: Poll[] = [];
 let nextId = 1;
 
 export async function POST(request: NextRequest) {
@@ -32,7 +60,7 @@ export async function POST(request: NextRequest) {
     const processedQuestions = validatedData.questions.map((question, qIndex) => {
       const questionId = `q_${nextId}_${qIndex}`;
       
-      let options: any[] = [];
+      let options: Option[] = [];
       
       // Create options for choice-based questions
       if (question.type === "single-choice" || question.type === "multiple-choice") {
@@ -54,7 +82,7 @@ export async function POST(request: NextRequest) {
     });
     
     // Create the poll object
-    const newPoll = {
+    const newPoll: Poll = {
       id: `poll_${nextId}`,
       title: validatedData.title,
       description: validatedData.description || "",
