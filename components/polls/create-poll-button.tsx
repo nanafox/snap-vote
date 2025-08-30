@@ -7,8 +7,8 @@ import Link from "next/link";
 export function CreatePollButton() {
   return (
     <Link href="/dashboard/polls/create">
-      <Button size="lg" className="shadow-md hover:shadow-lg transition-shadow">
-        <PlusCircle className="h-5 w-5 mr-2" />
+      <Button size="lg" className="shadow-md transition-shadow hover:shadow-lg">
+        <PlusCircle className="mr-2 h-5 w-5" />
         Create Poll
       </Button>
     </Link>

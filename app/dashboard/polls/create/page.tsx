@@ -4,25 +4,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 export const metadata: Metadata = {
   title: "Create New Poll",
-  description: "Build an engaging poll to gather insights from your audience with multiple question types and customization options.",
+  description:
+    "Build an engaging poll to gather insights from your audience with multiple question types and customization options.",
 };
 
 export default function CreatePollPage() {
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="mx-auto max-w-4xl space-y-8">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Create New Poll</h1>
-        <p className="text-lg text-muted-foreground">
-          Build an engaging poll to gather insights from your audience.
-        </p>
+        <h1 className="text-foreground text-3xl font-bold tracking-tight">Create New Poll</h1>
+        <p className="text-muted-foreground text-lg">Build an engaging poll to gather insights from your audience.</p>
       </div>
 
       <Card className="border-0 shadow-lg">
         <CardHeader>
           <CardTitle>Poll Details</CardTitle>
-          <CardDescription>
-            Fill in the information below to create your poll
-          </CardDescription>
+          <CardDescription>Fill in the information below to create your poll</CardDescription>
         </CardHeader>
         <CardContent>
           <CreatePollForm />

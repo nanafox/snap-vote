@@ -5,13 +5,17 @@ import { z } from "zod";
 const createPollSchema = z.object({
   title: z.string().min(1, "Poll title is required"),
   description: z.string().optional(),
-  questions: z.array(z.object({
-    text: z.string().min(1, "Question text is required"),
-    type: z.enum(["single-choice", "multiple-choice", "text", "rating"]),
-    options: z.array(z.string()).optional(),
-    required: z.boolean().default(true),
-    allowMultiple: z.boolean().optional(),
-  })).min(1, "At least one question is required"),
+  questions: z
+    .array(
+      z.object({
+        text: z.string().min(1, "Question text is required"),
+        type: z.enum(["single-choice", "multiple-choice", "text", "rating"]),
+        options: z.array(z.string()).optional(),
+        required: z.boolean().default(true),
+        allowMultiple: z.boolean().optional(),
+      })
+    )
+    .min(1, "At least one question is required"),
   expiresAt: z.string().optional(),
   isPublic: z.boolean().default(true),
 });

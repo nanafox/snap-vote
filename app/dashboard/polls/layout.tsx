@@ -5,10 +5,6 @@ export const metadata: Metadata = {
   description: "Manage and view all your polls in one place. Search, filter, and organize your polling campaigns.",
 };
 
-export default function PollsLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PollsLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

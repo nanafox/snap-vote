@@ -28,11 +28,8 @@ export function Header() {
       <div className="flex items-center justify-between">
         {/* Search */}
         <div className="relative w-96 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search polls..."
-            className="pl-10"
-          />
+          <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
+          <Input placeholder="Search polls..." className="pl-10" />
         </div>
 
         {/* Right side actions */}
@@ -40,7 +37,7 @@ export function Header() {
           {/* Notifications */}
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 h-3 w-3 bg-primary rounded-full"></span>
+            <span className="bg-primary absolute -top-1 -right-1 h-3 w-3 rounded-full"></span>
           </Button>
 
           {/* User menu */}
@@ -65,13 +62,9 @@ export function Header() {
                 <User className="mr-2 h-4 w-4" />
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                Settings
-              </DropdownMenuItem>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
-                Sign out
-              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>Sign out</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

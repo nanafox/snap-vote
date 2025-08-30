@@ -12,59 +12,38 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Plus,
-  Trash2,
-  GripVertical,
-  CheckSquare,
-  Circle,
-  Type,
-  Star,
-  Eye,
-  EyeOff,
-} from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Plus, Trash2, GripVertical, CheckSquare, Circle, Type, Star, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { QuestionType } from "@/types";
 
-const questionSchema = z.object({
-  text: z.string().min(1, "Question text is required"),
-  type: z.enum(["single-choice", "multiple-choice", "text", "rating"]),
-  options: z.array(z.string().min(1, "Option text is required")).optional(),
-  required: z.boolean(),
-  allowMultiple: z.boolean().optional(),
-}).refine((data) => {
-  // Validate that choice questions have at least 2 options
-  if (data.type === "single-choice" || data.type === "multiple-choice") {
-    return data.options && data.options.length >= 2;
-  }
-  return true;
-}, {
-  message: "Choice questions require at least 2 options",
-  path: ["options"]
-});
+const questionSchema = z
+  .object({
+    text: z.string().min(1, "Question text is required"),
+    type: z.enum(["single-choice", "multiple-choice", "text", "rating"]),
+    options: z.array(z.string().min(1, "Option text is required")).optional(),
+    required: z.boolean(),
+    allowMultiple: z.boolean().optional(),
+  })
+  .refine(
+    (data) => {
+      // Validate that choice questions have at least 2 options
+      if (data.type === "single-choice" || data.type === "multiple-choice") {
+        return data.options && data.options.length >= 2;
+      }
+      return true;
+    },
+    {
+      message: "Choice questions require at least 2 options",
+      path: ["options"],
+    }
+  );
 
 const pollSchema = z.object({
   title: z.string().min(1, "Poll title is required"),
   description: z.string().optional(),
-  questions: z
-    .array(questionSchema)
-    .min(1, "At least one question is required"),
+  questions: z.array(questionSchema).min(1, "At least one question is required"),
   expiresAt: z.string().optional(),
   isPublic: z.boolean(),
 });
@@ -158,7 +137,8 @@ export function CreatePollForm() {
   };
 
   const addQuestion = () => {
-    if (fields.length < 20) { // Limit to 20 questions max
+    if (fields.length < 20) {
+      // Limit to 20 questions max
       append({
         text: "",
         type: "single-choice",
@@ -175,19 +155,15 @@ export function CreatePollForm() {
   };
 
   const addOption = (questionIndex: number) => {
-    const currentOptions =
-      form.getValues(`questions.${questionIndex}.options`) || [];
-    if (currentOptions.length < 10) { // Limit to 10 options max
-      form.setValue(`questions.${questionIndex}.options`, [
-        ...currentOptions,
-        "",
-      ]);
+    const currentOptions = form.getValues(`questions.${questionIndex}.options`) || [];
+    if (currentOptions.length < 10) {
+      // Limit to 10 options max
+      form.setValue(`questions.${questionIndex}.options`, [...currentOptions, ""]);
     }
   };
 
   const removeOption = (questionIndex: number, optionIndex: number) => {
-    const currentOptions =
-      form.getValues(`questions.${questionIndex}.options`) || [];
+    const currentOptions = form.getValues(`questions.${questionIndex}.options`) || [];
     if (currentOptions.length > 2) {
       const newOptions = currentOptions.filter((_, i) => i !== optionIndex);
       form.setValue(`questions.${questionIndex}.options`, newOptions);
@@ -204,13 +180,11 @@ export function CreatePollForm() {
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-base font-medium">
-                  Poll Title *
-                </FormLabel>
+                <FormLabel className="text-base font-medium">Poll Title *</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter a clear, engaging title for your poll"
-                    className="text-lg h-12"
+                    className="h-12 text-lg"
                     {...field}
                   />
                 </FormControl>
@@ -224,9 +198,7 @@ export function CreatePollForm() {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-base font-medium">
-                  Description (Optional)
-                </FormLabel>
+                <FormLabel className="text-base font-medium">Description (Optional)</FormLabel>
                 <FormControl>
                   <Textarea
                     placeholder="Provide additional context or instructions for your poll"
@@ -234,24 +206,19 @@ export function CreatePollForm() {
                     {...field}
                   />
                 </FormControl>
-                <FormDescription>
-                  Help participants understand the purpose and context of your
-                  poll
-                </FormDescription>
+                <FormDescription>Help participants understand the purpose and context of your poll</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <FormField
               control={form.control}
               name="expiresAt"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base font-medium">
-                    Expiration Date (Optional)
-                  </FormLabel>
+                  <FormLabel className="text-base font-medium">Expiration Date (Optional)</FormLabel>
                   <FormControl>
                     <Input
                       type="datetime-local"
@@ -262,9 +229,7 @@ export function CreatePollForm() {
                       ref={field.ref}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Leave blank for polls that never expire
-                  </FormDescription>
+                  <FormDescription>Leave blank for polls that never expire</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -277,17 +242,10 @@ export function CreatePollForm() {
                 <FormItem className="flex flex-col justify-end">
                   <div className="flex items-center space-x-2">
                     <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
-                    <FormLabel className="text-base font-medium flex items-center space-x-2">
-                      {field.value ? (
-                        <Eye className="h-4 w-4" />
-                      ) : (
-                        <EyeOff className="h-4 w-4" />
-                      )}
+                    <FormLabel className="flex items-center space-x-2 text-base font-medium">
+                      {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                       <span>Public Poll</span>
                     </FormLabel>
                   </div>
@@ -325,22 +283,17 @@ export function CreatePollForm() {
             return (
               <Card
                 key={field.id}
-                className="border-2 border-dashed border-muted hover:border-primary/50 transition-colors"
+                className="border-muted hover:border-primary/50 border-2 border-dashed transition-colors"
               >
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <GripVertical className="h-4 w-4 text-muted-foreground" />
-                      <Badge
-                        variant="secondary"
-                        className="flex items-center space-x-1"
-                      >
+                      <GripVertical className="text-muted-foreground h-4 w-4" />
+                      <Badge variant="secondary" className="flex items-center space-x-1">
                         <IconComponent className="h-3 w-3" />
                         <span>{questionTypeLabels[questionType]}</span>
                       </Badge>
-                      <span className="text-sm text-muted-foreground">
-                        Question {questionIndex + 1}
-                      </span>
+                      <span className="text-muted-foreground text-sm">Question {questionIndex + 1}</span>
                     </div>
                     <Button
                       type="button"
@@ -362,10 +315,7 @@ export function CreatePollForm() {
                       <FormItem>
                         <FormLabel>Question Text *</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="Enter your question here"
-                            {...field}
-                          />
+                          <Input placeholder="Enter your question here" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -403,20 +353,17 @@ export function CreatePollForm() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {Object.entries(questionTypeLabels).map(
-                              ([value, label]) => {
-                                const Icon =
-                                  questionTypeIcons[value as QuestionType];
-                                return (
-                                  <SelectItem key={value} value={value}>
-                                    <div className="flex items-center space-x-2">
-                                      <Icon className="h-4 w-4" />
-                                      <span>{label}</span>
-                                    </div>
-                                  </SelectItem>
-                                );
-                              },
-                            )}
+                            {Object.entries(questionTypeLabels).map(([value, label]) => {
+                              const Icon = questionTypeIcons[value as QuestionType];
+                              return (
+                                <SelectItem key={value} value={value}>
+                                  <div className="flex items-center space-x-2">
+                                    <Icon className="h-4 w-4" />
+                                    <span>{label}</span>
+                                  </div>
+                                </SelectItem>
+                              );
+                            })}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -425,8 +372,7 @@ export function CreatePollForm() {
                   />
 
                   {/* Options for choice-based questions */}
-                  {(questionType === "single-choice" ||
-                    questionType === "multiple-choice") && (
+                  {(questionType === "single-choice" || questionType === "multiple-choice") && (
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <Label>Answer Options</Label>
@@ -437,77 +383,59 @@ export function CreatePollForm() {
                           onClick={() => addOption(questionIndex)}
                           disabled={(form.watch(`questions.${questionIndex}.options`) || []).length >= 10}
                         >
-                          <Plus className="h-3 w-3 mr-1" />
+                          <Plus className="mr-1 h-3 w-3" />
                           Add Option
                         </Button>
                       </div>
 
-                      {form
-                        .watch(`questions.${questionIndex}.options`)
-                        ?.map((_, optionIndex) => (
-                          <div
-                            key={optionIndex}
-                            className="flex items-center space-x-2"
-                          >
-                            <div className="flex-shrink-0">
-                              {questionType === "single-choice" ? (
-                                <Circle className="h-4 w-4 text-muted-foreground" />
-                              ) : (
-                                <CheckSquare className="h-4 w-4 text-muted-foreground" />
-                              )}
-                            </div>
-                            <FormField
-                              control={form.control}
-                              name={`questions.${questionIndex}.options.${optionIndex}`}
-                              render={({ field }) => (
-                                <FormItem className="flex-1">
-                                  <FormControl>
-                                    <Input
-                                      placeholder={`Option ${optionIndex + 1}`}
-                                      {...field}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                removeOption(questionIndex, optionIndex)
-                              }
-                              disabled={
-                                (
-                                  form.watch(
-                                    `questions.${questionIndex}.options`,
-                                  ) || []
-                                ).length <= 2
-                              }
-                              className="text-destructive hover:text-destructive"
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
+                      {form.watch(`questions.${questionIndex}.options`)?.map((_, optionIndex) => (
+                        <div key={optionIndex} className="flex items-center space-x-2">
+                          <div className="flex-shrink-0">
+                            {questionType === "single-choice" ? (
+                              <Circle className="text-muted-foreground h-4 w-4" />
+                            ) : (
+                              <CheckSquare className="text-muted-foreground h-4 w-4" />
+                            )}
                           </div>
-                        ))}
+                          <FormField
+                            control={form.control}
+                            name={`questions.${questionIndex}.options.${optionIndex}`}
+                            render={({ field }) => (
+                              <FormItem className="flex-1">
+                                <FormControl>
+                                  <Input placeholder={`Option ${optionIndex + 1}`} {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeOption(questionIndex, optionIndex)}
+                            disabled={(form.watch(`questions.${questionIndex}.options`) || []).length <= 2}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ))}
                     </div>
                   )}
 
                   {questionType === "rating" && (
-                    <div className="p-4 bg-muted/50 rounded-lg">
-                      <p className="text-sm text-muted-foreground">
-                        Rating questions will display a 1-5 star rating scale
-                        for responses.
+                    <div className="bg-muted/50 rounded-lg p-4">
+                      <p className="text-muted-foreground text-sm">
+                        Rating questions will display a 1-5 star rating scale for responses.
                       </p>
                     </div>
                   )}
 
                   {questionType === "text" && (
-                    <div className="p-4 bg-muted/50 rounded-lg">
-                      <p className="text-sm text-muted-foreground">
-                        Text questions allow participants to provide open-ended
-                        responses.
+                    <div className="bg-muted/50 rounded-lg p-4">
+                      <p className="text-muted-foreground text-sm">
+                        Text questions allow participants to provide open-ended responses.
                       </p>
                     </div>
                   )}
@@ -516,16 +444,11 @@ export function CreatePollForm() {
                     control={form.control}
                     name={`questions.${questionIndex}.required`}
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                      <FormItem className="flex flex-row items-center space-y-0 space-x-3">
                         <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
-                        <FormLabel className="text-sm font-normal">
-                          Required question
-                        </FormLabel>
+                        <FormLabel className="text-sm font-normal">Required question</FormLabel>
                       </FormItem>
                     )}
                   />
@@ -536,7 +459,7 @@ export function CreatePollForm() {
         </div>
 
         {/* Submit Section */}
-        <div className="flex items-center justify-between pt-6 border-t">
+        <div className="flex items-center justify-between border-t pt-6">
           <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
           </Button>
@@ -544,11 +467,7 @@ export function CreatePollForm() {
             <Button type="button" variant="outline" disabled={isSubmitting}>
               Save as Draft
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="min-w-[120px]"
-            >
+            <Button type="submit" disabled={isSubmitting} className="min-w-[120px]">
               {isSubmitting ? "Creating..." : "Create Poll"}
             </Button>
           </div>

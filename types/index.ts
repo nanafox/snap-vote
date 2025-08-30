@@ -21,7 +21,7 @@ export interface Question {
   allowMultiple?: boolean; // For checkbox type questions
 }
 
-export type QuestionType = 'single-choice' | 'multiple-choice' | 'text' | 'rating';
+export type QuestionType = "single-choice" | "multiple-choice" | "text" | "rating";
 
 export interface Option {
   id: string;
@@ -58,6 +58,6 @@ export interface CreateQuestionData {
 
 export interface PollFilters {
   search?: string;
-  status?: 'all' | 'active' | 'expired';
-  sortBy?: 'newest' | 'oldest' | 'most-voted';
+  status?: "all" | "active" | "expired";
+  sortBy?: "newest" | "oldest" | "most-voted";
 }

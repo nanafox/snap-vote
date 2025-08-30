@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+*.md
+package-lock.json
+.env*
+public/
+*.svg
+*.png
+*.jpg
+*.jpeg
+*.gif

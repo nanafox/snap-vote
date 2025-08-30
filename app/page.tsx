@@ -11,14 +11,14 @@ export default function Home() {
   const { session } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+    <div className="from-background via-background to-muted/20 min-h-screen bg-gradient-to-br">
       {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 border-b backdrop-blur">
+        <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <Link href="/">
             <div className="flex items-center space-x-2">
-              <BarChart3 className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold text-foreground">SnapVote</span>
+              <BarChart3 className="text-primary h-8 w-8" />
+              <span className="text-foreground text-2xl font-bold">SnapVote</span>
             </div>
           </Link>
           <nav className="flex items-center space-x-4">
@@ -29,7 +29,7 @@ export default function Home() {
                 </Link>
                 <Link href="/dashboard/polls/create">
                   <Button>
-                    <PlusCircle className="h-4 w-4 mr-2" />
+                    <PlusCircle className="mr-2 h-4 w-4" />
                     Create Poll
                   </Button>
                 </Link>
@@ -49,29 +49,29 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="py-24 px-4">
-        <div className="container mx-auto text-center max-w-4xl">
+      <section className="px-4 py-24">
+        <div className="container mx-auto max-w-4xl text-center">
           <Badge variant="secondary" className="mb-6">
             Fast & Simple Polling
           </Badge>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h1 className="from-foreground to-foreground/70 mb-6 bg-gradient-to-r bg-clip-text text-5xl font-bold text-transparent md:text-6xl">
             Create Polls in a <span className="text-primary italic underline">Snap</span>
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Build engaging polls, gather insights, and make data-driven decisions.
-            Perfect for teams, communities, and events.
+          <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-xl">
+            Build engaging polls, gather insights, and make data-driven decisions. Perfect for teams, communities, and
+            events.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Link href={session ? "/dashboard/polls/create" : "/register"}>
               <Button size="lg" className="w-full sm:w-auto">
-                <PlusCircle className="h-5 w-5 mr-2" />
+                <PlusCircle className="mr-2 h-5 w-5" />
                 Create Your First Poll
               </Button>
             </Link>
             <Link href={session ? "/dashboard" : "/login"}>
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 View Dashboard
-                <ArrowRight className="h-5 w-5 ml-2" />
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
           </div>
@@ -79,61 +79,53 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 px-4 bg-muted/30">
+      <section className="bg-muted/30 px-4 py-24">
         <div className="container mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose SnapVote?</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <div className="mb-16 text-center">
+            <h2 className="mb-4 text-3xl font-bold md:text-4xl">Why Choose SnapVote?</h2>
+            <p className="text-muted-foreground mx-auto max-w-2xl text-xl">
               Everything you need to create, share, and analyze polls efficiently.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <Card className="border-0 shadow-md transition-shadow hover:shadow-lg">
               <CardHeader className="text-center">
-                <Zap className="h-12 w-12 mx-auto text-primary mb-4" />
+                <Zap className="text-primary mx-auto mb-4 h-12 w-12" />
                 <CardTitle>Lightning Fast</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Create and deploy polls in seconds. No complex setup required.
-                </CardDescription>
+                <CardDescription>Create and deploy polls in seconds. No complex setup required.</CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
+            <Card className="border-0 shadow-md transition-shadow hover:shadow-lg">
               <CardHeader className="text-center">
-                <Users className="h-12 w-12 mx-auto text-primary mb-4" />
+                <Users className="text-primary mx-auto mb-4 h-12 w-12" />
                 <CardTitle>Real-time Results</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Watch votes come in live with beautiful, interactive charts.
-                </CardDescription>
+                <CardDescription>Watch votes come in live with beautiful, interactive charts.</CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
+            <Card className="border-0 shadow-md transition-shadow hover:shadow-lg">
               <CardHeader className="text-center">
-                <BarChart3 className="h-12 w-12 mx-auto text-primary mb-4" />
+                <BarChart3 className="text-primary mx-auto mb-4 h-12 w-12" />
                 <CardTitle>Rich Analytics</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Get detailed insights with comprehensive analytics and reporting.
-                </CardDescription>
+                <CardDescription>Get detailed insights with comprehensive analytics and reporting.</CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
+            <Card className="border-0 shadow-md transition-shadow hover:shadow-lg">
               <CardHeader className="text-center">
-                <Shield className="h-12 w-12 mx-auto text-primary mb-4" />
+                <Shield className="text-primary mx-auto mb-4 h-12 w-12" />
                 <CardTitle>Secure & Private</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Your data is protected with enterprise-grade security measures.
-                </CardDescription>
+                <CardDescription>Your data is protected with enterprise-grade security measures.</CardDescription>
               </CardContent>
             </Card>
           </div>
@@ -141,11 +133,11 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-4">
+      <section className="px-4 py-24">
         <div className="container mx-auto text-center">
-          <Card className="max-w-2xl mx-auto border-0 shadow-lg bg-gradient-to-r from-primary/5 to-primary/10">
+          <Card className="from-primary/5 to-primary/10 mx-auto max-w-2xl border-0 bg-gradient-to-r shadow-lg">
             <CardHeader>
-              <CardTitle className="text-3xl mb-4">Ready to Get Started?</CardTitle>
+              <CardTitle className="mb-4 text-3xl">Ready to Get Started?</CardTitle>
               <CardDescription className="text-lg">
                 Join thousands of users who trust SnapVote for their polling needs.
               </CardDescription>
@@ -154,7 +146,7 @@ export default function Home() {
               <Link href={session ? "/dashboard/polls/create" : "/register"}>
                 <Button size="lg" className="w-full sm:w-auto">
                   Create Your First Poll Now
-                  <ArrowRight className="h-5 w-5 ml-2" />
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
             </CardContent>
@@ -163,15 +155,13 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t bg-muted/30 py-12">
+      <footer className="bg-muted/30 border-t py-12">
         <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <BarChart3 className="h-6 w-6 text-primary" />
+          <div className="mb-4 flex items-center justify-center space-x-2">
+            <BarChart3 className="text-primary h-6 w-6" />
             <span className="text-xl font-bold">SnapVote</span>
           </div>
-          <p className="text-muted-foreground">
-            Fast, secure, and beautiful polling platform for modern teams.
-          </p>
+          <p className="text-muted-foreground">Fast, secure, and beautiful polling platform for modern teams.</p>
         </div>
       </footer>
     </div>

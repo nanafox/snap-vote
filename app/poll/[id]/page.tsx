@@ -17,7 +17,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 const mockPoll = {
   id: "1",
   title: "Team Lunch Preferences",
-  description: "Help us decide where to go for our next team lunch. We want to make sure everyone's dietary preferences are considered and that we choose a place that accommodates our budget.",
+  description:
+    "Help us decide where to go for our next team lunch. We want to make sure everyone's dietary preferences are considered and that we choose a place that accommodates our budget.",
   questions: [
     {
       id: "1",
@@ -79,26 +80,24 @@ export default function PublicPollPage({ params }: { params: { id: string } }) {
 
   if (!poll.isPublic) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center space-y-4">
-          <BarChart3 className="mx-auto h-12 w-12 text-muted-foreground" />
+      <div className="bg-background flex min-h-screen items-center justify-center">
+        <div className="space-y-4 text-center">
+          <BarChart3 className="text-muted-foreground mx-auto h-12 w-12" />
           <h1 className="text-2xl font-bold">Private Poll</h1>
-          <p className="text-muted-foreground">
-            This poll is private and cannot be accessed publicly.
-          </p>
+          <p className="text-muted-foreground">This poll is private and cannot be accessed publicly.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+    <div className="from-background via-background to-muted/20 min-h-screen bg-gradient-to-br">
       {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-center">
+      <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 border-b backdrop-blur">
+        <div className="container mx-auto flex items-center justify-center px-4 py-4">
           <div className="flex items-center space-x-2">
-            <BarChart3 className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold text-foreground">SnapVote</span>
+            <BarChart3 className="text-primary h-8 w-8" />
+            <span className="text-foreground text-2xl font-bold">SnapVote</span>
           </div>
         </div>
       </header>
@@ -109,13 +108,13 @@ export default function PublicPollPage({ params }: { params: { id: string } }) {
       </main>
 
       {/* Footer */}
-      <footer className="border-t bg-muted/30 py-8 mt-16">
+      <footer className="bg-muted/30 mt-16 border-t py-8">
         <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center space-x-2 mb-2">
-            <BarChart3 className="h-5 w-5 text-primary" />
+          <div className="mb-2 flex items-center justify-center space-x-2">
+            <BarChart3 className="text-primary h-5 w-5" />
             <span className="font-semibold">SnapVote</span>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Create your own polls at{" "}
             <Link href="/" className="text-primary hover:underline">
               snapvote.com

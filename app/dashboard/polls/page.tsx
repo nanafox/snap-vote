@@ -43,13 +43,15 @@ export default function PollsPage() {
 
   // Filter and sort polls based on current filters
   const filteredPolls = polls
-    .filter(poll => {
-      const matchesSearch = poll.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          poll.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    .filter((poll) => {
+      const matchesSearch =
+        poll.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        poll.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesStatus = filters.status === "all" ||
-                           (filters.status === "active" && poll.isActive) ||
-                           (filters.status === "expired" && !poll.isActive);
+      const matchesStatus =
+        filters.status === "all" ||
+        (filters.status === "active" && poll.isActive) ||
+        (filters.status === "expired" && !poll.isActive);
 
       return matchesSearch && matchesStatus;
     })
@@ -70,8 +72,8 @@ export default function PollsPage() {
     return (
       <div className="space-y-8">
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          <span className="ml-2 text-muted-foreground">Loading polls...</span>
+          <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
+          <span className="text-muted-foreground ml-2">Loading polls...</span>
         </div>
       </div>
     );
@@ -82,10 +84,8 @@ export default function PollsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">All Polls</h1>
-          <p className="text-lg text-muted-foreground">
-            Manage and view all your polls in one place.
-          </p>
+          <h1 className="text-foreground text-3xl font-bold tracking-tight">All Polls</h1>
+          <p className="text-muted-foreground text-lg">Manage and view all your polls in one place.</p>
         </div>
         <CreatePollButton />
       </div>
@@ -94,15 +94,13 @@ export default function PollsPage() {
       <Card className="border-0 shadow-md">
         <CardHeader>
           <CardTitle className="text-lg">Search & Filter</CardTitle>
-          <CardDescription>
-            Find specific polls or filter by status and sort preferences
-          </CardDescription>
+          <CardDescription>Find specific polls or filter by status and sort preferences</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col lg:flex-row gap-4">
+          <div className="flex flex-col gap-4 lg:flex-row">
             {/* Search */}
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
               <Input
                 placeholder="Search polls by title or description..."
                 value={searchQuery}
@@ -113,10 +111,7 @@ export default function PollsPage() {
 
             {/* Filters */}
             <div className="flex gap-2">
-              <PollFilters
-                filters={filters}
-                onFiltersChange={setFilters}
-              />
+              <PollFilters filters={filters} onFiltersChange={setFilters} />
               <Button variant="outline" size="icon">
                 <Filter className="h-4 w-4" />
               </Button>
@@ -127,19 +122,13 @@ export default function PollsPage() {
 
       {/* Results Summary */}
       <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
+        <div className="text-muted-foreground text-sm">
           Showing {filteredPolls.length} of {polls.length} polls
-          {searchQuery && (
-            <span> matching &quot;{searchQuery}&quot;</span>
-          )}
+          {searchQuery && <span> matching &quot;{searchQuery}&quot;</span>}
         </div>
 
         {searchQuery && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSearchQuery("")}
-          >
+          <Button variant="ghost" size="sm" onClick={() => setSearchQuery("")}>
             Clear search
           </Button>
         )}
@@ -151,12 +140,10 @@ export default function PollsPage() {
       {/* Empty State */}
       {polls.length === 0 && !searchQuery && (
         <Card className="border-0 shadow-md">
-          <CardContent className="text-center py-12">
-            <Search className="mx-auto h-12 w-12 text-muted-foreground" />
+          <CardContent className="py-12 text-center">
+            <Search className="text-muted-foreground mx-auto h-12 w-12" />
             <h3 className="mt-4 text-lg font-medium">No polls yet</h3>
-            <p className="mt-2 text-muted-foreground">
-              Get started by creating your first poll.
-            </p>
+            <p className="text-muted-foreground mt-2">Get started by creating your first poll.</p>
             <CreatePollButton />
           </CardContent>
         </Card>
@@ -165,17 +152,11 @@ export default function PollsPage() {
       {/* No Search Results */}
       {filteredPolls.length === 0 && searchQuery && (
         <Card className="border-0 shadow-md">
-          <CardContent className="text-center py-12">
-            <Search className="mx-auto h-12 w-12 text-muted-foreground" />
+          <CardContent className="py-12 text-center">
+            <Search className="text-muted-foreground mx-auto h-12 w-12" />
             <h3 className="mt-4 text-lg font-medium">No polls found</h3>
-            <p className="mt-2 text-muted-foreground">
-              Try adjusting your search terms or filters.
-            </p>
-            <Button
-              variant="outline"
-              className="mt-4"
-              onClick={() => setSearchQuery("")}
-            >
+            <p className="text-muted-foreground mt-2">Try adjusting your search terms or filters.</p>
+            <Button variant="outline" className="mt-4" onClick={() => setSearchQuery("")}>
               Clear search
             </Button>
           </CardContent>

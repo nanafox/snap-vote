@@ -54,18 +54,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Show loading state during SSR and initial client render
   if (!mounted || loading) {
-    return (
-      <AuthContext.Provider value={{ session: null, loading: true }}>
-        {children}
-      </AuthContext.Provider>
-    );
+    return <AuthContext.Provider value={{ session: null, loading: true }}>{children}</AuthContext.Provider>;
   }
 
-  return (
-    <AuthContext.Provider value={{ session, loading }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ session, loading }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

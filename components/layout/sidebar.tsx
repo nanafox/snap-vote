@@ -5,15 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  BarChart3,
-  Home,
-  PlusCircle,
-  Settings,
-  BarChart,
-  Menu,
-  X,
-} from "lucide-react";
+import { BarChart3, Home, PlusCircle, Settings, BarChart, Menu, X } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -28,15 +20,15 @@ export function Sidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full flex-col">
       {/* Logo */}
-      <div className="flex items-center space-x-2 p-6 border-b bg-background">
-        <BarChart3 className="h-8 w-8 text-primary" />
-        <span className="text-2xl font-bold text-foreground">SnapVote</span>
+      <div className="bg-background flex items-center space-x-2 border-b p-6">
+        <BarChart3 className="text-primary h-8 w-8" />
+        <span className="text-foreground text-2xl font-bold">SnapVote</span>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+      <nav className="flex-1 space-y-2 overflow-y-auto p-4">
         {navigation.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -44,14 +36,12 @@ export function Sidebar() {
               <Button
                 variant={isActive ? "default" : "ghost"}
                 className={cn(
-                  "w-full justify-start h-12",
-                  isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-muted"
+                  "h-12 w-full justify-start",
+                  isActive ? "bg-primary text-primary-foreground" : "hover:bg-muted"
                 )}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <item.icon className="h-5 w-5 mr-3" />
+                <item.icon className="mr-3 h-5 w-5" />
                 {item.name}
               </Button>
             </Link>
@@ -60,10 +50,10 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t bg-background">
-        <div className="text-sm text-muted-foreground text-center">
+      <div className="bg-background border-t p-4">
+        <div className="text-muted-foreground text-center text-sm">
           <p>SnapVote Dashboard</p>
-          <p className="text-xs mt-1">v1.0.0</p>
+          <p className="mt-1 text-xs">v1.0.0</p>
         </div>
       </div>
     </div>
@@ -72,33 +62,22 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex w-64 bg-background border-r flex-col fixed h-full z-30">
+      <div className="bg-background fixed z-30 hidden h-full w-64 flex-col border-r md:flex">
         <SidebarContent />
       </div>
 
       {/* Mobile Menu Button */}
-      <div className="md:hidden fixed top-4 left-4 z-50">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? (
-            <X className="h-4 w-4" />
-          ) : (
-            <Menu className="h-4 w-4" />
-          )}
+      <div className="fixed top-4 left-4 z-50 md:hidden">
+        <Button variant="outline" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
         </Button>
       </div>
 
       {/* Mobile Sidebar Overlay */}
       {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-40 flex">
-          <div
-            className="fixed inset-0 bg-black/50"
-            onClick={() => setIsMobileMenuOpen(false)}
-          />
-          <div className="relative flex w-64 bg-background border-r flex-col">
+        <div className="fixed inset-0 z-40 flex md:hidden">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileMenuOpen(false)} />
+          <div className="bg-background relative flex w-64 flex-col border-r">
             <SidebarContent />
           </div>
         </div>

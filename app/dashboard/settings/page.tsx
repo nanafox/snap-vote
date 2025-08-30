@@ -6,25 +6,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { 
-  User, 
-  Bell, 
-  Shield, 
-  Palette, 
-  Globe,
-  Save,
-  Trash2
-} from "lucide-react";
+import { User, Bell, Shield, Palette, Globe, Save, Trash2 } from "lucide-react";
 
 export default function SettingsPage() {
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="mx-auto max-w-4xl space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-foreground">Settings</h1>
-        <p className="text-muted-foreground">
-          Manage your account preferences and application settings.
-        </p>
+        <h1 className="text-foreground text-3xl font-bold">Settings</h1>
+        <p className="text-muted-foreground">Manage your account preferences and application settings.</p>
       </div>
 
       {/* Profile Settings */}
@@ -34,9 +24,7 @@ export default function SettingsPage() {
             <User className="h-5 w-5" />
             <CardTitle>Profile Settings</CardTitle>
           </div>
-          <CardDescription>
-            Update your personal information and preferences
-          </CardDescription>
+          <CardDescription>Update your personal information and preferences</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2">
@@ -49,11 +37,11 @@ export default function SettingsPage() {
               <Input id="lastName" placeholder="Enter your last name" />
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="email">Email Address</Label>
             <Input id="email" type="email" placeholder="Enter your email" />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Your email will be used for notifications and account recovery
             </p>
           </div>
@@ -65,7 +53,7 @@ export default function SettingsPage() {
 
           <div className="flex justify-end">
             <Button>
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="mr-2 h-4 w-4" />
               Save Changes
             </Button>
           </div>
@@ -79,9 +67,7 @@ export default function SettingsPage() {
             <Bell className="h-5 w-5" />
             <CardTitle>Notification Preferences</CardTitle>
           </div>
-          <CardDescription>
-            Choose how you want to be notified about poll activity
-          </CardDescription>
+          <CardDescription>Choose how you want to be notified about poll activity</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
@@ -105,7 +91,7 @@ export default function SettingsPage() {
 
           <div className="flex justify-end">
             <Button>
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="mr-2 h-4 w-4" />
               Save Preferences
             </Button>
           </div>
@@ -119,41 +105,35 @@ export default function SettingsPage() {
             <Shield className="h-5 w-5" />
             <CardTitle>Privacy & Security</CardTitle>
           </div>
-          <CardDescription>
-            Manage your privacy settings and account security
-          </CardDescription>
+          <CardDescription>Manage your privacy settings and account security</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <Label>Default Poll Visibility</Label>
-                <p className="text-sm text-muted-foreground">
-                  Choose the default visibility for new polls
-                </p>
+                <p className="text-muted-foreground text-sm">Choose the default visibility for new polls</p>
               </div>
               <Badge variant="outline">Public</Badge>
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <Checkbox id="showInDirectory" />
               <Label htmlFor="showInDirectory">Show my polls in public directory</Label>
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <Checkbox id="allowAnonymous" />
               <Label htmlFor="allowAnonymous">Allow anonymous voting by default</Label>
             </div>
           </div>
 
-          <div className="pt-4 border-t">
+          <div className="border-t pt-4">
             <div className="space-y-4">
               <div>
                 <Label className="text-base font-medium">Change Password</Label>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Update your password to keep your account secure
-                </p>
-                <div className="space-y-3 max-w-sm">
+                <p className="text-muted-foreground mb-3 text-sm">Update your password to keep your account secure</p>
+                <div className="max-w-sm space-y-3">
                   <Input type="password" placeholder="Current password" />
                   <Input type="password" placeholder="New password" />
                   <Input type="password" placeholder="Confirm new password" />
@@ -165,7 +145,7 @@ export default function SettingsPage() {
 
           <div className="flex justify-end">
             <Button>
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="mr-2 h-4 w-4" />
               Save Settings
             </Button>
           </div>
@@ -179,28 +159,30 @@ export default function SettingsPage() {
             <Palette className="h-5 w-5" />
             <CardTitle>Appearance</CardTitle>
           </div>
-          <CardDescription>
-            Customize the look and feel of your dashboard
-          </CardDescription>
+          <CardDescription>Customize the look and feel of your dashboard</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <div>
               <Label className="text-base font-medium">Theme</Label>
-              <p className="text-sm text-muted-foreground mb-3">
-                Choose your preferred color scheme
-              </p>
+              <p className="text-muted-foreground mb-3 text-sm">Choose your preferred color scheme</p>
               <div className="flex space-x-3">
-                <Button variant="outline" size="sm">Light</Button>
-                <Button variant="default" size="sm">Dark</Button>
-                <Button variant="outline" size="sm">System</Button>
+                <Button variant="outline" size="sm">
+                  Light
+                </Button>
+                <Button variant="default" size="sm">
+                  Dark
+                </Button>
+                <Button variant="outline" size="sm">
+                  System
+                </Button>
               </div>
             </div>
           </div>
 
           <div className="flex justify-end">
             <Button>
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="mr-2 h-4 w-4" />
               Save Appearance
             </Button>
           </div>
@@ -214,15 +196,13 @@ export default function SettingsPage() {
             <Globe className="h-5 w-5" />
             <CardTitle>Integrations</CardTitle>
           </div>
-          <CardDescription>
-            Connect with external services and tools
-          </CardDescription>
+          <CardDescription>Connect with external services and tools</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8">
-            <Globe className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">Coming Soon</h3>
-            <p className="text-muted-foreground max-w-sm mx-auto">
+          <div className="py-8 text-center">
+            <Globe className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
+            <h3 className="mb-2 text-lg font-medium">Coming Soon</h3>
+            <p className="text-muted-foreground mx-auto max-w-sm">
               Integration with popular tools like Slack, Microsoft Teams, and Zapier will be available soon.
             </p>
           </div>
@@ -230,24 +210,20 @@ export default function SettingsPage() {
       </Card>
 
       {/* Danger Zone */}
-      <Card className="border-0 shadow-md border-destructive/20">
+      <Card className="border-destructive/20 border-0 shadow-md">
         <CardHeader>
           <div className="flex items-center space-x-2">
-            <Trash2 className="h-5 w-5 text-destructive" />
+            <Trash2 className="text-destructive h-5 w-5" />
             <CardTitle className="text-destructive">Danger Zone</CardTitle>
           </div>
-          <CardDescription>
-            Permanent actions that cannot be undone
-          </CardDescription>
+          <CardDescription>Permanent actions that cannot be undone</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 border border-destructive/20 rounded-lg">
+            <div className="border-destructive/20 flex items-center justify-between rounded-lg border p-4">
               <div>
                 <h4 className="font-medium">Delete Account</h4>
-                <p className="text-sm text-muted-foreground">
-                  Permanently delete your account and all associated data
-                </p>
+                <p className="text-muted-foreground text-sm">Permanently delete your account and all associated data</p>
               </div>
               <Button variant="destructive" size="sm">
                 Delete Account

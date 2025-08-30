@@ -9,17 +9,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import {
-  Share2,
-  Edit,
-  Download,
-  MoreHorizontal,
-  Copy,
-  ExternalLink,
-  Trash2,
-  Pause,
-  Play
-} from "lucide-react";
+import { Share2, Edit, Download, MoreHorizontal, Copy, ExternalLink, Trash2, Pause, Play } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { Poll } from "@/types";
 
@@ -63,12 +53,7 @@ export function PollActions({ poll }: PollActionsProps) {
   return (
     <div className="flex items-center space-x-2">
       {/* Share Button */}
-      <Button
-        variant="outline"
-        onClick={handleShare}
-        disabled={isSharing}
-        className="flex items-center space-x-2"
-      >
+      <Button variant="outline" onClick={handleShare} disabled={isSharing} className="flex items-center space-x-2">
         <Share2 className="h-4 w-4" />
         <span>{isSharing ? "Copying..." : "Share"}</span>
       </Button>
@@ -77,7 +62,7 @@ export function PollActions({ poll }: PollActionsProps) {
       {poll.isPublic && (
         <Button
           variant="outline"
-          onClick={() => window.open(`/poll/${poll.id}`, '_blank')}
+          onClick={() => window.open(`/poll/${poll.id}`, "_blank")}
           className="flex items-center space-x-2"
         >
           <ExternalLink className="h-4 w-4" />
@@ -93,24 +78,24 @@ export function PollActions({ poll }: PollActionsProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem onClick={() => handleAction('edit')}>
+          <DropdownMenuItem onClick={() => handleAction("edit")}>
             <Edit className="mr-2 h-4 w-4" />
             Edit Poll
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={() => handleAction('copy')}>
+          <DropdownMenuItem onClick={() => handleAction("copy")}>
             <Copy className="mr-2 h-4 w-4" />
             Duplicate Poll
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={() => handleAction('download')}>
+          <DropdownMenuItem onClick={() => handleAction("download")}>
             <Download className="mr-2 h-4 w-4" />
             Export Results
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem onClick={() => handleAction(poll.isActive ? 'pause' : 'resume')}>
+          <DropdownMenuItem onClick={() => handleAction(poll.isActive ? "pause" : "resume")}>
             {poll.isActive ? (
               <>
                 <Pause className="mr-2 h-4 w-4" />
@@ -126,10 +111,7 @@ export function PollActions({ poll }: PollActionsProps) {
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem
-            onClick={() => handleAction('delete')}
-            className="text-destructive focus:text-destructive"
-          >
+          <DropdownMenuItem onClick={() => handleAction("delete")} className="text-destructive focus:text-destructive">
             <Trash2 className="mr-2 h-4 w-4" />
             Delete Poll
           </DropdownMenuItem>

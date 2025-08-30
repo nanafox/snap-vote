@@ -4,16 +4,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  MoreHorizontal,
-  Eye,
-  Edit,
-  Trash2,
-  Share2,
-  BarChart3,
-  Calendar,
-  Users
-} from "lucide-react";
+import { MoreHorizontal, Eye, Edit, Trash2, Share2, BarChart3, Calendar, Users } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,14 +21,14 @@ interface PollListProps {
 
 export function PollList({ polls, showActions = true }: PollListProps) {
   const formatDate = (date: Date) => {
-      if (!(date instanceof Date)) {
-        date = new Date(date);
-      }
+    if (!(date instanceof Date)) {
+      date = new Date(date);
+    }
 
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     }).format(date);
   };
 
@@ -48,12 +39,10 @@ export function PollList({ polls, showActions = true }: PollListProps) {
 
   if (polls.length === 0) {
     return (
-      <div className="text-center py-12">
-        <BarChart3 className="mx-auto h-12 w-12 text-muted-foreground" />
+      <div className="py-12 text-center">
+        <BarChart3 className="text-muted-foreground mx-auto h-12 w-12" />
         <h3 className="mt-4 text-lg font-medium">No polls found</h3>
-        <p className="mt-2 text-muted-foreground">
-          Get started by creating your first poll.
-        </p>
+        <p className="text-muted-foreground mt-2">Get started by creating your first poll.</p>
         <Link href="/dashboard/polls/create">
           <Button className="mt-4">Create Poll</Button>
         </Link>
@@ -64,27 +53,21 @@ export function PollList({ polls, showActions = true }: PollListProps) {
   return (
     <div className="space-y-4">
       {polls.map((poll) => (
-        <Card key={poll.id} className="border-0 shadow-md hover:shadow-lg transition-shadow">
+        <Card key={poll.id} className="border-0 shadow-md transition-shadow hover:shadow-lg">
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between">
-              <div className="flex-1 min-w-0">
-                <CardTitle className="text-lg font-semibold truncate">
-                  {poll.title}
-                </CardTitle>
+              <div className="min-w-0 flex-1">
+                <CardTitle className="truncate text-lg font-semibold">{poll.title}</CardTitle>
                 {poll.description && (
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                    {poll.description}
-                  </p>
+                  <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">{poll.description}</p>
                 )}
-                <div className="flex items-center space-x-4 mt-3">
-                  <Badge variant={poll.isActive ? "default" : "secondary"}>
-                    {poll.isActive ? "Active" : "Ended"}
-                  </Badge>
-                  <div className="flex items-center space-x-1 text-sm text-muted-foreground">
+                <div className="mt-3 flex items-center space-x-4">
+                  <Badge variant={poll.isActive ? "default" : "secondary"}>{poll.isActive ? "Active" : "Ended"}</Badge>
+                  <div className="text-muted-foreground flex items-center space-x-1 text-sm">
                     <Calendar className="h-3 w-3" />
                     <span>{formatDate(poll.createdAt)}</span>
                   </div>
-                  <div className="flex items-center space-x-1 text-sm text-muted-foreground">
+                  <div className="text-muted-foreground flex items-center space-x-1 text-sm">
                     <Users className="h-3 w-3" />
                     <span>{poll.totalVotes} votes</span>
                   </div>
@@ -99,21 +82,21 @@ export function PollList({ polls, showActions = true }: PollListProps) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem onClick={() => handleAction(poll.id, 'view')}>
+                    <DropdownMenuItem onClick={() => handleAction(poll.id, "view")}>
                       <Eye className="mr-2 h-4 w-4" />
                       View Results
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleAction(poll.id, 'edit')}>
+                    <DropdownMenuItem onClick={() => handleAction(poll.id, "edit")}>
                       <Edit className="mr-2 h-4 w-4" />
                       Edit Poll
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleAction(poll.id, 'share')}>
+                    <DropdownMenuItem onClick={() => handleAction(poll.id, "share")}>
                       <Share2 className="mr-2 h-4 w-4" />
                       Share Poll
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      onClick={() => handleAction(poll.id, 'delete')}
+                      onClick={() => handleAction(poll.id, "delete")}
                       className="text-destructive focus:text-destructive"
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
@@ -127,8 +110,11 @@ export function PollList({ polls, showActions = true }: PollListProps) {
 
           <CardContent className="pt-0">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                <span>{poll.questions.length} question{poll.questions.length !== 1 ? 's' : ''}</span>
+              <div className="text-muted-foreground flex items-center space-x-2 text-sm">
+                <span>
+                  {poll.questions.length} question
+                  {poll.questions.length !== 1 ? "s" : ""}
+                </span>
                 {poll.expiresAt && (
                   <>
                     <span>•</span>
@@ -146,14 +132,14 @@ export function PollList({ polls, showActions = true }: PollListProps) {
               <div className="flex items-center space-x-2">
                 <Link href={`/dashboard/polls/${poll.id}`}>
                   <Button variant="outline" size="sm">
-                    <BarChart3 className="h-4 w-4 mr-2" />
+                    <BarChart3 className="mr-2 h-4 w-4" />
                     View Details
                   </Button>
                 </Link>
                 {poll.isPublic && (
                   <Link href={`/poll/${poll.id}`}>
                     <Button variant="outline" size="sm">
-                      <Share2 className="h-4 w-4 mr-2" />
+                      <Share2 className="mr-2 h-4 w-4" />
                       Public Link
                     </Button>
                   </Link>

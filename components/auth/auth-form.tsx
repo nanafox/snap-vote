@@ -4,13 +4,7 @@ import { useState } from "react";
 import { LoginForm } from "./login-form";
 import { RegisterForm } from "./register-form";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 type AuthView = "login" | "register";
 
@@ -26,13 +20,11 @@ export function AuthForm({ defaultView = "login" }: AuthFormProps) {
       <CardHeader>
         <CardTitle>{view === "login" ? "Sign In" : "Create an account"}</CardTitle>
         <CardDescription>
-          {view === "login"
-            ? "Welcome back! Please sign in to continue."
-            : "Enter your details to get started."}
+          {view === "login" ? "Welcome back! Please sign in to continue." : "Enter your details to get started."}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 gap-x-2 mb-6">
+        <div className="mb-6 grid grid-cols-2 gap-x-2">
           <Button
             variant={view === "login" ? "default" : "outline"}
             onClick={() => setView("login")}

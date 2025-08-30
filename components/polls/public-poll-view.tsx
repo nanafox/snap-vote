@@ -10,14 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import {
-  Star,
-  BarChart3,
-  Users,
-  Calendar,
-  CheckCircle,
-  AlertCircle
-} from "lucide-react";
+import { Star, BarChart3, Users, Calendar, CheckCircle, AlertCircle } from "lucide-react";
 import type { Poll, Question } from "@/types";
 
 interface PublicPollViewProps {
@@ -33,7 +26,13 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showResults, setShowResults] = useState(false);
 
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
@@ -42,7 +41,7 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
       console.log("Submitting votes:", data);
 
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       setIsSubmitted(true);
       setShowResults(true);
@@ -54,10 +53,10 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
   };
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     }).format(date);
   };
 
@@ -65,19 +64,13 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
     const fieldName = `question_${question.id}`;
 
     switch (question.type) {
-      case 'single-choice':
+      case "single-choice":
         return (
-          <RadioGroup
-            onValueChange={(value) => setValue(fieldName, value)}
-            className="space-y-3"
-          >
+          <RadioGroup onValueChange={(value) => setValue(fieldName, value)} className="space-y-3">
             {question.options.map((option) => (
               <div key={option.id} className="flex items-center space-x-2">
                 <RadioGroupItem value={option.id} id={`${fieldName}_${option.id}`} />
-                <Label
-                  htmlFor={`${fieldName}_${option.id}`}
-                  className="flex-1 cursor-pointer"
-                >
+                <Label htmlFor={`${fieldName}_${option.id}`} className="flex-1 cursor-pointer">
                   {option.text}
                 </Label>
               </div>
@@ -85,7 +78,7 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
           </RadioGroup>
         );
 
-      case 'multiple-choice':
+      case "multiple-choice":
         return (
           <div className="space-y-3">
             {question.options.map((option) => (
@@ -93,18 +86,18 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
                 <Checkbox
                   id={`${fieldName}_${option.id}`}
                   onCheckedChange={(checked) => {
-                    const currentValues = watch(fieldName) as string[] || [];
+                    const currentValues = (watch(fieldName) as string[]) || [];
                     if (checked) {
                       setValue(fieldName, [...currentValues, option.id]);
                     } else {
-                      setValue(fieldName, currentValues.filter(id => id !== option.id));
+                      setValue(
+                        fieldName,
+                        currentValues.filter((id) => id !== option.id)
+                      );
                     }
                   }}
                 />
-                <Label
-                  htmlFor={`${fieldName}_${option.id}`}
-                  className="flex-1 cursor-pointer"
-                >
+                <Label htmlFor={`${fieldName}_${option.id}`} className="flex-1 cursor-pointer">
                   {option.text}
                 </Label>
               </div>
@@ -112,23 +105,15 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
           </div>
         );
 
-      case 'rating':
+      case "rating":
         return (
           <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">
-              Rate from 1 (poor) to 5 (excellent)
-            </p>
-            <RadioGroup
-              onValueChange={(value) => setValue(fieldName, parseInt(value))}
-              className="flex space-x-6"
-            >
+            <p className="text-muted-foreground text-sm">Rate from 1 (poor) to 5 (excellent)</p>
+            <RadioGroup onValueChange={(value) => setValue(fieldName, parseInt(value))} className="flex space-x-6">
               {[1, 2, 3, 4, 5].map((rating) => (
                 <div key={rating} className="flex flex-col items-center space-y-2">
                   <RadioGroupItem value={rating.toString()} id={`${fieldName}_${rating}`} />
-                  <Label
-                    htmlFor={`${fieldName}_${rating}`}
-                    className="flex flex-col items-center cursor-pointer"
-                  >
+                  <Label htmlFor={`${fieldName}_${rating}`} className="flex cursor-pointer flex-col items-center">
                     <Star className="h-5 w-5 text-yellow-400" />
                     <span className="text-xs">{rating}</span>
                   </Label>
@@ -138,11 +123,11 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
           </div>
         );
 
-      case 'text':
+      case "text":
         return (
           <Textarea
             {...register(fieldName, {
-              required: question.required ? "This field is required" : false
+              required: question.required ? "This field is required" : false,
             })}
             placeholder="Enter your response here..."
             className="min-h-[100px]"
@@ -165,11 +150,9 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
 
           return (
             <div key={option.id} className="space-y-2">
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">{option.text}</span>
-                <Badge variant="secondary">
-                  {percentage.toFixed(1)}%
-                </Badge>
+                <Badge variant="secondary">{percentage.toFixed(1)}%</Badge>
               </div>
               <Progress value={percentage} className="h-2" />
             </div>
@@ -181,14 +164,12 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
 
   if (!poll.isActive) {
     return (
-      <div className="max-w-2xl mx-auto p-6">
+      <div className="mx-auto max-w-2xl p-6">
         <Card className="border-0 shadow-lg">
-          <CardContent className="text-center py-12">
-            <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Poll Ended</h2>
-            <p className="text-muted-foreground">
-              This poll is no longer accepting responses.
-            </p>
+          <CardContent className="py-12 text-center">
+            <AlertCircle className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
+            <h2 className="mb-2 text-xl font-semibold">Poll Ended</h2>
+            <p className="text-muted-foreground">This poll is no longer accepting responses.</p>
           </CardContent>
         </Card>
       </div>
@@ -196,17 +177,13 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8">
+    <div className="mx-auto max-w-4xl space-y-8 p-6">
       {/* Header */}
-      <div className="text-center space-y-4">
+      <div className="space-y-4 text-center">
         <h1 className="text-3xl font-bold">{poll.title}</h1>
-        {poll.description && (
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {poll.description}
-          </p>
-        )}
+        {poll.description && <p className="text-muted-foreground mx-auto max-w-2xl text-lg">{poll.description}</p>}
 
-        <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex items-center justify-center space-x-6 text-sm">
           <div className="flex items-center space-x-1">
             <Users className="h-4 w-4" />
             <span>{poll.totalVotes} responses</span>
@@ -226,16 +203,12 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
 
       {/* Success Message */}
       {isSubmitted && (
-        <Card className="border-green-200 bg-green-50 dark:bg-green-950 dark:border-green-800">
+        <Card className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950">
           <CardContent className="flex items-center space-x-3 py-4">
             <CheckCircle className="h-5 w-5 text-green-600" />
             <div>
-              <p className="font-medium text-green-800 dark:text-green-200">
-                Thank you for your response!
-              </p>
-              <p className="text-sm text-green-700 dark:text-green-300">
-                Your vote has been recorded successfully.
-              </p>
+              <p className="font-medium text-green-800 dark:text-green-200">Thank you for your response!</p>
+              <p className="text-sm text-green-700 dark:text-green-300">Your vote has been recorded successfully.</p>
             </div>
           </CardContent>
         </Card>
@@ -251,23 +224,17 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
                   <div className="flex-1">
                     <CardTitle className="text-lg font-medium">
                       Question {index + 1}
-                      {question.required && (
-                        <span className="text-destructive ml-1">*</span>
-                      )}
+                      {question.required && <span className="text-destructive ml-1">*</span>}
                     </CardTitle>
-                    <CardDescription className="mt-1">
-                      {question.text}
-                    </CardDescription>
+                    <CardDescription className="mt-1">{question.text}</CardDescription>
                   </div>
-                  <Badge variant="outline">
-                    {question.type.replace('-', ' ')}
-                  </Badge>
+                  <Badge variant="outline">{question.type.replace("-", " ")}</Badge>
                 </div>
               </CardHeader>
               <CardContent>
                 {renderQuestion(question)}
                 {errors[`question_${question.id}`] && (
-                  <p className="text-sm text-destructive mt-2">
+                  <p className="text-destructive mt-2 text-sm">
                     {errors[`question_${question.id}`]?.message as string}
                   </p>
                 )}
@@ -276,23 +243,13 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
           ))}
 
           <div className="flex justify-center space-x-4">
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              size="lg"
-              className="min-w-[160px]"
-            >
+            <Button type="submit" disabled={isSubmitting} size="lg" className="min-w-[160px]">
               {isSubmitting ? "Submitting..." : "Submit Response"}
             </Button>
 
             {!isSubmitted && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowResults(!showResults)}
-                size="lg"
-              >
-                <BarChart3 className="h-4 w-4 mr-2" />
+              <Button type="button" variant="outline" onClick={() => setShowResults(!showResults)} size="lg">
+                <BarChart3 className="mr-2 h-4 w-4" />
                 {showResults ? "Hide Results" : "View Results"}
               </Button>
             )}
@@ -301,12 +258,8 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
       ) : (
         <div className="space-y-6">
           <div className="text-center">
-            <Button
-              onClick={() => setShowResults(!showResults)}
-              variant="outline"
-              size="lg"
-            >
-              <BarChart3 className="h-4 w-4 mr-2" />
+            <Button onClick={() => setShowResults(!showResults)} variant="outline" size="lg">
+              <BarChart3 className="mr-2 h-4 w-4" />
               {showResults ? "Hide Results" : "View Results"}
             </Button>
           </div>
@@ -317,10 +270,8 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
       {showResults && (
         <div className="space-y-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-2">Poll Results</h2>
-            <p className="text-muted-foreground">
-              Current results from all participants
-            </p>
+            <h2 className="mb-2 text-2xl font-bold">Poll Results</h2>
+            <p className="text-muted-foreground">Current results from all participants</p>
           </div>
 
           {poll.questions.map((question, index) => (
@@ -331,10 +282,11 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {question.type === 'single-choice' || question.type === 'multiple-choice'
-                  ? renderResults(question)
-                  : <p className="text-muted-foreground">Results not available for this question type</p>
-                }
+                {question.type === "single-choice" || question.type === "multiple-choice" ? (
+                  renderResults(question)
+                ) : (
+                  <p className="text-muted-foreground">Results not available for this question type</p>
+                )}
               </CardContent>
             </Card>
           ))}
