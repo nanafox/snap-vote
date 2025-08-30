@@ -46,7 +46,7 @@ const questionSchema = z.object({
   text: z.string().min(1, "Question text is required"),
   type: z.enum(["single-choice", "multiple-choice", "text", "rating"]),
   options: z.array(z.string().min(1, "Option text is required")).optional(),
-  required: z.boolean().default(true),
+  required: z.boolean(),
   allowMultiple: z.boolean().optional(),
 }).refine((data) => {
   // Validate that choice questions have at least 2 options
@@ -66,7 +66,7 @@ const pollSchema = z.object({
     .array(questionSchema)
     .min(1, "At least one question is required"),
   expiresAt: z.string().optional(),
-  isPublic: z.boolean().default(true),
+  isPublic: z.boolean(),
 });
 
 type PollFormData = z.infer<typeof pollSchema>;

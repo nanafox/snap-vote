@@ -24,7 +24,7 @@ const analyticsData = {
   trends: [
     { period: "This Week", polls: 3, votes: 120, views: 456 },
     { period: "Last Week", polls: 2, votes: 98, views: 321 },
-    { period: "This Month", polls: 8, votes: 534, votes: 1234 },
+    { period: "This Month", polls: 8, votes: 534, views: 1234 },
   ],
   topPerformingPolls: [
     { title: "Team Lunch Preferences", votes: 45, responseRate: 92 },

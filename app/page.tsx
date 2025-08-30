@@ -1,10 +1,15 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BarChart3, Users, Zap, Shield, ArrowRight, PlusCircle } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/contexts/auth";
 
 export default function Home() {
+  const { session } = useAuth();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       {/* Header */}
@@ -17,15 +22,28 @@ export default function Home() {
             </div>
           </Link>
           <nav className="flex items-center space-x-4">
-            <Link href="/dashboard">
-              <Button variant="ghost">Dashboard</Button>
-            </Link>
-            <Link href="/dashboard/polls/create">
-              <Button>
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Create Poll
-              </Button>
-            </Link>
+            {session ? (
+              <>
+                <Link href="/dashboard">
+                  <Button variant="ghost">Dashboard</Button>
+                </Link>
+                <Link href="/dashboard/polls/create">
+                  <Button>
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Create Poll
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost">Login</Button>
+                </Link>
+                <Link href="/register">
+                  <Button>Sign Up</Button>
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       </header>
@@ -44,13 +62,13 @@ export default function Home() {
             Perfect for teams, communities, and events.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/dashboard/polls/create">
+            <Link href={session ? "/dashboard/polls/create" : "/register"}>
               <Button size="lg" className="w-full sm:w-auto">
                 <PlusCircle className="h-5 w-5 mr-2" />
                 Create Your First Poll
               </Button>
             </Link>
-            <Link href="/dashboard">
+            <Link href={session ? "/dashboard" : "/login"}>
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 View Dashboard
                 <ArrowRight className="h-5 w-5 ml-2" />
@@ -133,7 +151,7 @@ export default function Home() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Link href="/dashboard/polls/create">
+              <Link href={session ? "/dashboard/polls/create" : "/register"}>
                 <Button size="lg" className="w-full sm:w-auto">
                   Create Your First Poll Now
                   <ArrowRight className="h-5 w-5 ml-2" />

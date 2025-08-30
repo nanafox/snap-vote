@@ -11,7 +11,8 @@ import Link from "next/link";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   // In a real app, you would fetch the poll data here using params.id
-  const pollId = params.id;
+  const poll = await params;
+  const pollId = poll.id;
   return {
     title: `Poll ${pollId} Details`, // This would be dynamic based on the poll
     description: "View detailed results and analytics for your poll.",
@@ -65,7 +66,7 @@ const mockPoll = {
     },
   ],
   createdAt: new Date("2024-01-15"),
-  updatedAt: new Date("2024-01-15"),
+  updatedAt: new Date("2024-02-15"),
   expiresAt: new Date("2024-01-25"),
   isActive: true,
   isPublic: true,

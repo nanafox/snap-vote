@@ -14,11 +14,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/auth";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
 
 export function Header() {
   const { session } = useAuth();
-  const router = useRouter();
   const supabase = createClient();
 
   const handleLogout = async () => {
