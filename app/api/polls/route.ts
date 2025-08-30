@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { addPoll, getAllPolls } from "@/lib/polls/storage";
 
 // Validation schema for poll creation
 const createPollSchema = z.object({
@@ -20,39 +21,6 @@ const createPollSchema = z.object({
   isPublic: z.boolean().default(true),
 });
 
-interface Option {
-  id: string;
-  text: string;
-  votes: number;
-}
-
-interface Question {
-  id: string;
-  text: string;
-  type: "single-choice" | "multiple-choice" | "text" | "rating";
-  options: Option[];
-  required: boolean;
-  allowMultiple: boolean;
-}
-
-interface Poll {
-  id: string;
-  title: string;
-  description: string;
-  questions: Question[];
-  createdAt: Date;
-  updatedAt: Date;
-  expiresAt: Date | null;
-  isActive: boolean;
-  isPublic: boolean;
-  createdBy: string;
-  totalVotes: number;
-}
-
-// In-memory storage for polls (replace with actual database later)
-const polls: Poll[] = [];
-let nextId = 1;
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -60,57 +28,28 @@ export async function POST(request: NextRequest) {
     // Validate the request body
     const validatedData = createPollSchema.parse(body);
 
-    // Process questions and create options
-    const processedQuestions = validatedData.questions.map((question, qIndex) => {
-      const questionId = `q_${nextId}_${qIndex}`;
-
-      let options: Option[] = [];
-
-      // Create options for choice-based questions
-      if (question.type === "single-choice" || question.type === "multiple-choice") {
-        options = (question.options || []).map((optionText, oIndex) => ({
-          id: `opt_${nextId}_${qIndex}_${oIndex}`,
-          text: optionText,
-          votes: 0,
-        }));
-      }
-
-      return {
-        id: questionId,
-        text: question.text,
-        type: question.type,
-        options,
-        required: question.required,
-        allowMultiple: question.allowMultiple || false,
-      };
-    });
-
-    // Create the poll object
-    const newPoll: Poll = {
-      id: `poll_${nextId}`,
+    // Create the poll using shared storage
+    const poll = addPoll({
       title: validatedData.title,
       description: validatedData.description || "",
-      questions: processedQuestions,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      questions: validatedData.questions.map((q) => ({
+        text: q.text,
+        type: q.type,
+        options: q.options || [],
+        required: q.required,
+        allowMultiple: q.allowMultiple || false,
+      })),
       expiresAt: validatedData.expiresAt ? new Date(validatedData.expiresAt) : null,
-      isActive: true,
       isPublic: validatedData.isPublic,
-      createdBy: "anonymous", // Replace with actual user ID when auth is implemented
-      totalVotes: 0,
-    };
+    });
 
-    // Store the poll (in a real app, this would be saved to a database)
-    polls.push(newPoll);
-    nextId++;
-
-    console.log("Poll created successfully:", newPoll);
+    console.log("Poll created successfully:", poll);
 
     return NextResponse.json(
       {
         success: true,
         message: "Poll created successfully",
-        poll: newPoll,
+        poll: poll,
       },
       { status: 201 }
     );
@@ -145,10 +84,12 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status") || "all";
     const sortBy = searchParams.get("sortBy") || "newest";
 
-    const totalPolls = polls.length;
+    // Get all polls from shared storage
+    const allPolls = getAllPolls();
+    const totalPolls = allPolls.length;
 
     // Filter polls based on search query and status
-    const filteredPolls = polls
+    const filteredPolls = allPolls
       .filter((poll) => {
         const matchesSearch =
           poll.title.toLowerCase().includes(searchQuery.toLowerCase()) ||

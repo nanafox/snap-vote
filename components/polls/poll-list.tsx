@@ -18,19 +18,23 @@ import { CreatePollButton } from "@/components/polls/create-poll-button";
 interface PollListProps {
   polls: Poll[];
   showActions?: boolean;
+  hasActiveSearch?: boolean;
 }
 
-export function PollList({ polls, showActions = true }: PollListProps) {
-  const formatDate = (date: Date) => {
-    if (!(date instanceof Date)) {
-      date = new Date(date);
+export function PollList({ polls, showActions = true, hasActiveSearch = false }: PollListProps) {
+  const formatDate = (date: Date | string) => {
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+
+    // Check if the date is valid
+    if (isNaN(dateObj.getTime())) {
+      return "Invalid Date";
     }
 
     return new Intl.DateTimeFormat("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
-    }).format(date);
+    }).format(dateObj);
   };
 
   const handleAction = (pollId: string, action: string) => {
@@ -39,6 +43,12 @@ export function PollList({ polls, showActions = true }: PollListProps) {
   };
 
   if (polls.length === 0) {
+    // Only show the "Create Poll" version when there's no active search
+    // When there's an active search, the parent component will handle the empty state
+    if (hasActiveSearch) {
+      return null;
+    }
+
     return (
       <div className="py-12 text-center">
         <BarChart3 className="text-muted-foreground mx-auto h-12 w-12" />
@@ -50,7 +60,7 @@ export function PollList({ polls, showActions = true }: PollListProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="grid grid-cols-1 space-y-4 md:grid-cols-2 md:gap-6 md:space-y-0">
       {polls.map((poll) => (
         <Card key={poll.id} className="border-0 shadow-md transition-shadow hover:shadow-lg">
           <CardHeader className="pb-3">
@@ -136,7 +146,7 @@ export function PollList({ polls, showActions = true }: PollListProps) {
                   </Button>
                 </Link>
                 {poll.isPublic && (
-                  <Link href={`/poll/${poll.id}`}>
+                  <Link href={`/polls/${poll.id}`}>
                     <Button variant="outline" size="sm">
                       <Share2 className="mr-2 h-4 w-4" />
                       Public Link

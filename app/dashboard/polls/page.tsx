@@ -15,10 +15,26 @@ export default function PollsPage() {
   const [totalPolls, setTotalPolls] = useState(0);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     status: "all",
     sortBy: "newest",
   });
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Clear search function
+  const clearSearch = () => {
+    setSearchQuery("");
+    setDebouncedSearchQuery("");
+  };
 
   // Fetch polls from API
   useEffect(() => {
@@ -26,7 +42,7 @@ export default function PollsPage() {
       setLoading(true);
       try {
         const params = new URLSearchParams();
-        if (searchQuery) params.append("search", searchQuery);
+        if (debouncedSearchQuery) params.append("search", debouncedSearchQuery);
         if (filters.status) params.append("status", filters.status);
         if (filters.sortBy) params.append("sortBy", filters.sortBy);
 
@@ -47,7 +63,7 @@ export default function PollsPage() {
     };
 
     fetchPolls();
-  }, [searchQuery, filters]);
+  }, [debouncedSearchQuery, filters]);
 
   if (loading) {
     return (
@@ -109,23 +125,23 @@ export default function PollsPage() {
         </div>
 
         {searchQuery && (
-          <Button variant="ghost" size="sm" onClick={() => setSearchQuery("")}>
+          <Button variant="ghost" size="sm" onClick={clearSearch}>
             Clear search
           </Button>
         )}
       </div>
 
       {/* Polls List */}
-      <PollList polls={polls} />
+      <PollList polls={polls} hasActiveSearch={!!searchQuery || !!debouncedSearchQuery} />
 
-      {/* No Search Results */}
-      {polls.length === 0 && searchQuery && (
+      {/* No Search Results - Only show when actively searching */}
+      {polls.length === 0 && (searchQuery || debouncedSearchQuery) && (
         <Card className="border-0 shadow-md">
           <CardContent className="py-12 text-center">
             <Search className="text-muted-foreground mx-auto h-12 w-12" />
             <h3 className="mt-4 text-lg font-medium">No polls found</h3>
             <p className="text-muted-foreground mt-2">Try adjusting your search terms or filters.</p>
-            <Button variant="outline" className="mt-4" onClick={() => setSearchQuery("")}>
+            <Button variant="outline" className="mt-4" onClick={clearSearch}>
               Clear search
             </Button>
           </CardContent>

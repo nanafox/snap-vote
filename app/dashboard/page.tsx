@@ -1,112 +1,101 @@
-import { Metadata } from "next";
+"use client";
+
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CreatePollButton } from "@/components/polls/create-poll-button";
 import { PollList } from "@/components/polls/poll-list";
 import { BarChart3, Users, Eye, TrendingUp, PlusCircle, Activity } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "Manage your polls, view analytics, and track engagement from your SnapVote dashboard.",
-};
-
-// Mock data - replace with real data later
-const stats = [
-  {
-    title: "Total Polls",
-    value: "12",
-    change: "+2 from last week",
-    icon: BarChart3,
-    trend: "up",
-  },
-  {
-    title: "Total Votes",
-    value: "1,234",
-    change: "+120 from last week",
-    icon: Users,
-    trend: "up",
-  },
-  {
-    title: "Poll Views",
-    value: "5,678",
-    change: "+456 from last week",
-    icon: Eye,
-    trend: "up",
-  },
-  {
-    title: "Active Polls",
-    value: "8",
-    change: "4 expiring soon",
-    icon: Activity,
-    trend: "neutral",
-  },
-];
-
-const recentPolls = [
-  {
-    id: "1",
-    title: "Team Lunch Preferences",
-    description: "Help us decide where to go for our next team lunch",
-    questions: [
-      {
-        id: "1",
-        text: "Which restaurant do you prefer?",
-        type: "single-choice" as const,
-        options: [],
-        required: true,
-      },
-    ],
-    totalVotes: 24,
-    isActive: true,
-    createdAt: new Date("2024-01-15"),
-    updatedAt: new Date("2024-01-15"),
-    isPublic: true,
-    createdBy: "user1",
-  },
-  {
-    id: "2",
-    title: "Office Meeting Room Booking",
-    description: "Which time slot works best for the all-hands meeting?",
-    questions: [
-      {
-        id: "2",
-        text: "Preferred time slot",
-        type: "single-choice" as const,
-        options: [],
-        required: true,
-      },
-    ],
-    totalVotes: 18,
-    isActive: true,
-    createdAt: new Date("2024-01-14"),
-    updatedAt: new Date("2024-01-14"),
-    isPublic: false,
-    createdBy: "user1",
-  },
-  {
-    id: "3",
-    title: "Company Event Theme",
-    description: "Vote for the theme of our annual company event",
-    questions: [
-      {
-        id: "3",
-        text: "Event theme",
-        type: "single-choice" as const,
-        options: [],
-        required: true,
-      },
-    ],
-    totalVotes: 45,
-    isActive: false,
-    createdAt: new Date("2024-01-10"),
-    updatedAt: new Date("2024-01-10"),
-    expiresAt: new Date("2024-01-15"),
-    isPublic: true,
-    createdBy: "user1",
-  },
-];
+import type { Poll } from "@/types";
+import Link from "next/link";
 
 export default function DashboardPage() {
+  const [polls, setPolls] = useState<Poll[]>([]);
+  const [stats, setStats] = useState([
+    {
+      title: "Total Polls",
+      value: "0",
+      change: "No polls yet",
+      icon: BarChart3,
+      trend: "neutral",
+    },
+    {
+      title: "Total Votes",
+      value: "0",
+      change: "No votes yet",
+      icon: Users,
+      trend: "neutral",
+    },
+    {
+      title: "Poll Views",
+      value: "0",
+      change: "No views yet",
+      icon: Eye,
+      trend: "neutral",
+    },
+    {
+      title: "Active Polls",
+      value: "0",
+      change: "No active polls",
+      icon: Activity,
+      trend: "neutral",
+    },
+  ]);
+
+  // Fetch recent polls from API
+  useEffect(() => {
+    const fetchPolls = async () => {
+      try {
+        const response = await fetch("/api/polls");
+        const result = await response.json();
+
+        if (result.success) {
+          const recentPolls = result.polls.slice(0, 3); // Get only the 3 most recent
+          setPolls(recentPolls);
+
+          // Update stats based on actual data
+          const totalPolls = result.polls.length;
+          const totalVotes = result.polls.reduce((sum: number, poll: Poll) => sum + poll.totalVotes, 0);
+          const activePolls = result.polls.filter((poll: Poll) => poll.isActive).length;
+
+          setStats([
+            {
+              title: "Total Polls",
+              value: totalPolls.toString(),
+              change: totalPolls > 0 ? `${totalPolls} created` : "No polls yet",
+              icon: BarChart3,
+              trend: totalPolls > 0 ? "up" : "neutral",
+            },
+            {
+              title: "Total Votes",
+              value: totalVotes.toString(),
+              change: totalVotes > 0 ? `${totalVotes} total votes` : "No votes yet",
+              icon: Users,
+              trend: totalVotes > 0 ? "up" : "neutral",
+            },
+            {
+              title: "Poll Views",
+              value: "N/A",
+              change: "Feature coming soon",
+              icon: Eye,
+              trend: "neutral",
+            },
+            {
+              title: "Active Polls",
+              value: activePolls.toString(),
+              change: activePolls > 0 ? `${activePolls} currently active` : "No active polls",
+              icon: Activity,
+              trend: activePolls > 0 ? "up" : "neutral",
+            },
+          ]);
+        }
+      } catch (error) {
+        console.error("Error fetching polls:", error);
+      }
+    };
+
+    fetchPolls();
+  }, []);
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -149,13 +138,15 @@ export default function DashboardPage() {
                 <CardTitle>Recent Polls</CardTitle>
                 <CardDescription>Your latest polling activity</CardDescription>
               </div>
-              <Button variant="outline" size="sm">
-                View All
-              </Button>
+              <Link href="/dashboard/polls">
+                <Button variant="outline" size="sm">
+                  View All
+                </Button>
+              </Link>
             </div>
           </CardHeader>
           <CardContent>
-            <PollList polls={recentPolls} showActions={false} />
+            <PollList polls={polls} showActions={false} hasActiveSearch={true} />
           </CardContent>
         </Card>
 
@@ -167,18 +158,24 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-3">
-              <Button className="h-12 w-full justify-start" size="lg">
-                <PlusCircle className="mr-3 h-5 w-5" />
-                Create New Poll
-              </Button>
-              <Button variant="outline" className="h-12 w-full justify-start" size="lg">
-                <BarChart3 className="mr-3 h-5 w-5" />
-                View Analytics
-              </Button>
-              <Button variant="outline" className="h-12 w-full justify-start" size="lg">
-                <Eye className="mr-3 h-5 w-5" />
-                Share Poll
-              </Button>
+              <Link href="/dashboard/polls/create">
+                <Button className="h-12 w-full justify-start" size="lg">
+                  <PlusCircle className="mr-3 h-5 w-5" />
+                  Create New Poll
+                </Button>
+              </Link>
+              <Link href="/dashboard/analytics">
+                <Button variant="outline" className="h-12 w-full justify-start" size="lg">
+                  <BarChart3 className="mr-3 h-5 w-5" />
+                  View Analytics
+                </Button>
+              </Link>
+              <Link href="/dashboard/polls">
+                <Button variant="outline" className="h-12 w-full justify-start" size="lg">
+                  <Eye className="mr-3 h-5 w-5" />
+                  View All Polls
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>

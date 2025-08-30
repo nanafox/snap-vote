@@ -1,4 +1,6 @@
-import { Metadata } from "next";
+"use client";
+
+import { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { PollDetails } from "@/components/polls/poll-details";
 import { PollResults } from "@/components/polls/poll-results";
@@ -6,92 +8,114 @@ import { PollActions } from "@/components/polls/poll-actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, Users, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Calendar, Users, Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  // In a real app, you would fetch the poll data here using params.id
-  const poll = await params;
-  const pollId = poll.id;
-  return {
-    title: `Poll ${pollId} Details`, // This would be dynamic based on the poll
-    description: "View detailed results and analytics for your poll.",
-  };
+interface Poll {
+  id: string;
+  title: string;
+  description: string;
+  questions: Array<{
+    id: string;
+    text: string;
+    type: "single-choice" | "multiple-choice" | "text" | "rating";
+    options: Array<{
+      id: string;
+      text: string;
+      votes: number;
+    }>;
+    required: boolean;
+    allowMultiple?: boolean;
+  }>;
+  createdAt: string;
+  updatedAt: string;
+  expiresAt: string | null;
+  isActive: boolean;
+  isPublic: boolean;
+  createdBy: string;
+  totalVotes: number;
 }
 
-// Mock data - replace with real data fetching
-const mockPoll = {
-  id: "1",
-  title: "Team Lunch Preferences",
-  description:
-    "Help us decide where to go for our next team lunch. We want to make sure everyone's dietary preferences are considered and that we choose a place that accommodates our budget.",
-  questions: [
-    {
-      id: "1",
-      text: "Which restaurant do you prefer for our team lunch?",
-      type: "single-choice" as const,
-      options: [
-        { id: "1", text: "Italian Bistro", votes: 12 },
-        { id: "2", text: "Mexican Cantina", votes: 8 },
-        { id: "3", text: "Asian Fusion", votes: 15 },
-        { id: "4", text: "American Grill", votes: 5 },
-      ],
-      required: true,
-    },
-    {
-      id: "2",
-      text: "Any dietary restrictions we should know about?",
-      type: "multiple-choice" as const,
-      options: [
-        { id: "5", text: "Vegetarian", votes: 6 },
-        { id: "6", text: "Vegan", votes: 3 },
-        { id: "7", text: "Gluten-free", votes: 4 },
-        { id: "8", text: "No restrictions", votes: 25 },
-      ],
-      required: false,
-      allowMultiple: true,
-    },
-    {
-      id: "3",
-      text: "How would you rate the importance of this team lunch?",
-      type: "rating" as const,
-      options: [],
-      required: true,
-    },
-    {
-      id: "4",
-      text: "Any additional suggestions or comments?",
-      type: "text" as const,
-      options: [],
-      required: false,
-    },
-  ],
-  createdAt: new Date("2024-01-15"),
-  updatedAt: new Date("2024-02-15"),
-  expiresAt: new Date("2024-01-25"),
-  isActive: true,
-  isPublic: true,
-  createdBy: "user1",
-  totalVotes: 40,
-};
+export default function PollDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const [poll, setPoll] = useState<Poll | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [pollId, setPollId] = useState<string | null>(null);
 
-export default function PollDetailPage() {
-  // In a real app, you would fetch the poll data here using the poll ID from params
-  // For now, using mock data
-  const poll = mockPoll;
+  // Handle async params
+  useEffect(() => {
+    const getParams = async () => {
+      const { id } = await params;
+      setPollId(id);
+    };
+    getParams();
+  }, [params]);
+
+  useEffect(() => {
+    if (!pollId) return;
+
+    async function fetchPoll() {
+      try {
+        const response = await fetch(`/api/polls/${pollId}`);
+        if (!response.ok) {
+          if (response.status === 404) {
+            notFound();
+          }
+          throw new Error("Failed to fetch poll");
+        }
+        const data = await response.json();
+        setPoll(data.poll);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPoll();
+  }, [pollId]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <div className="flex items-center space-x-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading poll...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-red-600">Error</h2>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!poll) {
     notFound();
   }
 
-  const formatDate = (date: Date) => {
+  const formatDate = (dateString: string) => {
+    const dateObj = new Date(dateString);
+
+    // Check if the date is valid
+    if (isNaN(dateObj.getTime())) {
+      return "Invalid Date";
+    }
+
     return new Intl.DateTimeFormat("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    }).format(date);
+    }).format(dateObj);
   };
 
   return (

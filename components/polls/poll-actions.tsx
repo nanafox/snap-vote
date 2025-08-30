@@ -24,7 +24,7 @@ export function PollActions({ poll }: PollActionsProps) {
   const handleShare = async () => {
     setIsSharing(true);
     try {
-      const shareUrl = `${window.location.origin}/poll/${poll.id}`;
+      const shareUrl = `${window.location.origin}/polls/${poll.id}`;
       await navigator.clipboard.writeText(shareUrl);
       toast({
         title: "Link copied!",
@@ -62,7 +62,7 @@ export function PollActions({ poll }: PollActionsProps) {
       {poll.isPublic && (
         <Button
           variant="outline"
-          onClick={() => window.open(`/poll/${poll.id}`, "_blank")}
+          onClick={() => window.open(`/polls/${poll.id}`, "_blank")}
           className="flex items-center space-x-2"
         >
           <ExternalLink className="h-4 w-4" />

@@ -52,12 +52,19 @@ export function PublicPollView({ poll }: PublicPollViewProps) {
     }
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date: Date | string) => {
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+
+    // Check if the date is valid
+    if (isNaN(dateObj.getTime())) {
+      return "Invalid Date";
+    }
+
     return new Intl.DateTimeFormat("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
-    }).format(date);
+    }).format(dateObj);
   };
 
   const renderQuestion = (question: Question) => {
