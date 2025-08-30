@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import type { Poll } from "@/types";
+import { CreatePollButton } from "@/components/polls/create-poll-button";
 
 interface PollListProps {
   polls: Poll[];
@@ -43,9 +44,7 @@ export function PollList({ polls, showActions = true }: PollListProps) {
         <BarChart3 className="text-muted-foreground mx-auto h-12 w-12" />
         <h3 className="mt-4 text-lg font-medium">No polls found</h3>
         <p className="text-muted-foreground mt-2">Get started by creating your first poll.</p>
-        <Link href="/dashboard/polls/create">
-          <Button className="mt-4">Create Poll</Button>
-        </Link>
+        <CreatePollButton />
       </div>
     );
   }

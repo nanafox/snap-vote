@@ -138,11 +138,46 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const searchQuery = searchParams.get("search") || "";
+    const status = searchParams.get("status") || "all";
+    const sortBy = searchParams.get("sortBy") || "newest";
+
+    const totalPolls = polls.length;
+
+    // Filter polls based on search query and status
+    const filteredPolls = polls
+      .filter((poll) => {
+        const matchesSearch =
+          poll.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          poll.description?.toLowerCase().includes(searchQuery.toLowerCase());
+
+        const matchesStatus =
+          status === "all" ||
+          (status === "active" && poll.isActive) ||
+          (status === "expired" && !poll.isActive);
+
+        return matchesSearch && matchesStatus;
+      })
+      .sort((a, b) => {
+        switch (sortBy) {
+          case "newest":
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          case "oldest":
+            return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          case "most-voted":
+            return b.totalVotes - a.totalVotes;
+          default:
+            return 0;
+        }
+      });
+
     return NextResponse.json({
       success: true,
-      polls: polls,
+      polls: filteredPolls,
+      totalPolls,
     });
   } catch (error) {
     console.error("Error fetching polls:", error);

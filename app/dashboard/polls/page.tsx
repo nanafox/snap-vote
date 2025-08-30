@@ -12,6 +12,7 @@ import type { Poll } from "@/types";
 
 export default function PollsPage() {
   const [polls, setPolls] = useState<Poll[]>([]);
+  const [totalPolls, setTotalPolls] = useState(0);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
@@ -22,12 +23,19 @@ export default function PollsPage() {
   // Fetch polls from API
   useEffect(() => {
     const fetchPolls = async () => {
+      setLoading(true);
       try {
-        const response = await fetch("/api/polls");
+        const params = new URLSearchParams();
+        if (searchQuery) params.append("search", searchQuery);
+        if (filters.status) params.append("status", filters.status);
+        if (filters.sortBy) params.append("sortBy", filters.sortBy);
+
+        const response = await fetch(`/api/polls?${params.toString()}`);
         const result = await response.json();
 
         if (result.success) {
           setPolls(result.polls);
+          setTotalPolls(result.totalPolls);
         } else {
           console.error("Failed to fetch polls:", result.message);
         }
@@ -39,34 +47,7 @@ export default function PollsPage() {
     };
 
     fetchPolls();
-  }, []);
-
-  // Filter and sort polls based on current filters
-  const filteredPolls = polls
-    .filter((poll) => {
-      const matchesSearch =
-        poll.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        poll.description?.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesStatus =
-        filters.status === "all" ||
-        (filters.status === "active" && poll.isActive) ||
-        (filters.status === "expired" && !poll.isActive);
-
-      return matchesSearch && matchesStatus;
-    })
-    .sort((a, b) => {
-      switch (filters.sortBy) {
-        case "newest":
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        case "oldest":
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-        case "most-voted":
-          return b.totalVotes - a.totalVotes;
-        default:
-          return 0;
-      }
-    });
+  }, [searchQuery, filters]);
 
   if (loading) {
     return (
@@ -99,7 +80,7 @@ export default function PollsPage() {
         <CardContent>
           <div className="flex flex-col gap-4 lg:flex-row">
             {/* Search */}
-            <div className="relative flex-1">
+            <div className="relative flex flex-1 items-center">
               <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
               <Input
                 placeholder="Search polls by title or description..."
@@ -123,7 +104,7 @@ export default function PollsPage() {
       {/* Results Summary */}
       <div className="flex items-center justify-between">
         <div className="text-muted-foreground text-sm">
-          Showing {filteredPolls.length} of {polls.length} polls
+          Showing {polls.length} of {totalPolls} polls
           {searchQuery && <span> matching &quot;{searchQuery}&quot;</span>}
         </div>
 
@@ -135,22 +116,10 @@ export default function PollsPage() {
       </div>
 
       {/* Polls List */}
-      <PollList polls={filteredPolls} />
-
-      {/* Empty State */}
-      {polls.length === 0 && !searchQuery && (
-        <Card className="border-0 shadow-md">
-          <CardContent className="py-12 text-center">
-            <Search className="text-muted-foreground mx-auto h-12 w-12" />
-            <h3 className="mt-4 text-lg font-medium">No polls yet</h3>
-            <p className="text-muted-foreground mt-2">Get started by creating your first poll.</p>
-            <CreatePollButton />
-          </CardContent>
-        </Card>
-      )}
+      <PollList polls={polls} />
 
       {/* No Search Results */}
-      {filteredPolls.length === 0 && searchQuery && (
+      {polls.length === 0 && searchQuery && (
         <Card className="border-0 shadow-md">
           <CardContent className="py-12 text-center">
             <Search className="text-muted-foreground mx-auto h-12 w-12" />
