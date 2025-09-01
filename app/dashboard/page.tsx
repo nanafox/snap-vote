@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CreatePollButton } from "@/components/polls/create-poll-button";
-import { PollList } from "@/components/polls/poll-list";
+
 import { BarChart3, Users, Eye, TrendingUp, PlusCircle, Activity } from "lucide-react";
 import type { Poll } from "@/types";
 import Link from "next/link";
@@ -130,23 +130,64 @@ export default function DashboardPage() {
 
       {/* Recent Activity */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Recent Polls */}
+        {/* Recent Polls - Redesigned */}
         <Card className="border-0 shadow-md">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Recent Polls</CardTitle>
-                <CardDescription>Your latest polling activity</CardDescription>
-              </div>
-              <Link href="/dashboard/polls">
-                <Button variant="outline" size="sm">
-                  View All
-                </Button>
-              </Link>
+          <CardHeader className="bg-muted/40 flex flex-row items-center justify-between rounded-t-md border-b pb-3">
+            <div>
+              <CardTitle className="text-lg font-semibold">Recent Polls</CardTitle>
+              <CardDescription className="text-sm">Your latest polling activity</CardDescription>
             </div>
+            <Link href="/dashboard/polls">
+              <Button variant="ghost" size="sm" className="text-primary hover:bg-primary/10 font-medium">
+                View All
+              </Button>
+            </Link>
           </CardHeader>
           <CardContent>
-            <PollList polls={polls} showActions={false} hasActiveSearch={true} />
+            <div className="scrollbar-thin scrollbar-thumb-muted-foreground/30 scrollbar-track-transparent flex gap-4 overflow-x-auto py-2">
+              {polls.length === 0 ? (
+                <div className="text-muted-foreground w-full py-8 text-center text-sm">No recent polls found.</div>
+              ) : (
+                polls.map((poll) => (
+                  <div
+                    key={poll.id}
+                    className="border-muted hover:border-primary/40 flex max-w-xs min-w-[260px] flex-1 flex-col justify-between rounded-lg border bg-white p-4 shadow-sm transition-shadow hover:shadow-lg"
+                  >
+                    <div className="mb-2">
+                      <div className="mb-1 flex items-center gap-2">
+                        <span className="line-clamp-1 text-base font-semibold">{poll.title}</span>
+                        {poll.isActive && (
+                          <span className="ml-2 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                            Active
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-muted-foreground mb-2 line-clamp-2 text-xs">{poll.description}</div>
+                    </div>
+                    <div className="text-muted-foreground mb-3 flex items-center gap-3 text-xs">
+                      <span className="flex items-center gap-1">
+                        <Users className="h-3 w-3" />
+                        {poll.totalVotes} votes
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Activity className="h-3 w-3" />
+                        {poll.questions?.length || 0} questions
+                      </span>
+                    </div>
+                    <div className="mt-auto flex items-center justify-between">
+                      <span className="text-xs">
+                        {poll.expiresAt ? `Expires ${new Date(poll.expiresAt).toLocaleDateString()}` : "No expiry"}
+                      </span>
+                      <Link href={`/dashboard/polls/${poll.id}`}>
+                        <Button size="sm" variant="outline" className="h-7 px-3 text-xs">
+                          View Details
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </CardContent>
         </Card>
 
