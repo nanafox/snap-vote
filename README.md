@@ -1,8 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SnapVote
+
+SnapVote is a modern, fast, and user-friendly polling application built with Next.js. Create, share, and analyze polls with real-time results and beautiful visualizations.
+
+## Features
+
+- **Instant Poll Creation**: Create polls in seconds with our intuitive interface
+- **Multiple Question Types**: Support for single-choice, multiple-choice, text, and rating questions
+- **Real-time Results**: Watch votes come in live with beautiful, interactive charts
+- **User Authentication**: Secure login and registration using Supabase authentication
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
+- **Rich Analytics**: Get detailed insights with comprehensive analytics
+
+## Tech Stack
+
+- **Frontend**: Next.js 15, React 19, TailwindCSS 4
+- **Authentication**: Supabase Auth
+- **UI Components**: Custom components with Radix UI primitives
+- **Forms**: React Hook Form with Zod validation
+- **State Management**: React Context API
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18.x or higher
+- npm, yarn, pnpm, or bun
+
+### Environment Setup
+
+Create a `.env.local` file in the root directory with the following variables:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
+```
+
+### Running the Development Server
 
 ```bash
 npm run dev
@@ -14,23 +62,50 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Building for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+# or
+yarn build
+# or
+pnpm build
+# or
+bun build
+```
 
-## Learn More
+### Starting the Production Server
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run start
+# or
+yarn start
+# or
+pnpm start
+# or
+bun start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `/app`: Next.js app router pages and layouts
+- `/components`: Reusable UI components
+- `/contexts`: React context providers
+- `/hooks`: Custom React hooks
+- `/lib`: Utility functions and services
+- `/public`: Static assets
+- `/types`: TypeScript type definitions
 
-## Deploy on Vercel
+## Features in Detail
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Authentication
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The app provides user authentication with login, registration, and profile management through Supabase's authentication services.
+
+### Dashboard
+
+Once logged in, users can access their dashboard to:
+- View all created polls
+- Track
