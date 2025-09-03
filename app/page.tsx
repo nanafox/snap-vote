@@ -155,7 +155,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-muted/30 border-t py-12">
+      <footer className="bg-muted/30 mt-auto border-t py-12">
         <div className="container mx-auto px-4 text-center">
           <div className="mb-4 flex items-center justify-center space-x-2">
             <BarChart3 className="text-primary h-6 w-6" />

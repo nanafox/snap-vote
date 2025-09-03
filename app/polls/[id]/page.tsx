@@ -57,7 +57,7 @@ export default function PublicPollPage({ params }: { params: Promise<{ id: strin
 
   if (error || !poll) {
     return (
-      <div className="bg-background flex min-h-screen items-center justify-center">
+      <div className="bg-background flex min-h-[100vh] items-center justify-center">
         <div className="space-y-4 text-center">
           <BarChart3 className="text-muted-foreground mx-auto h-12 w-12" />
           <h1 className="text-2xl font-bold">Poll Not Found</h1>
@@ -100,7 +100,7 @@ export default function PublicPollPage({ params }: { params: Promise<{ id: strin
       </main>
 
       {/* Footer */}
-      <footer className="bg-muted/30 mt-16 border-t py-8">
+      <footer className="bg-muted/30 mt-auto border-t py-8">
         <div className="container mx-auto px-4 text-center">
           <div className="mb-2 flex items-center justify-center space-x-2">
             <BarChart3 className="text-primary h-5 w-5" />
