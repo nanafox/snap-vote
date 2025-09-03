@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,62 +7,20 @@ import { PollList } from "@/components/polls/poll-list";
 import { CreatePollButton } from "@/components/polls/create-poll-button";
 import { PollFilters } from "@/components/polls/poll-filters";
 import { Search, Filter, Loader2 } from "lucide-react";
-import type { Poll } from "@/types";
+import { usePolls } from "@/hooks/use-polls";
 
 export default function PollsPage() {
-  const [polls, setPolls] = useState<Poll[]>([]);
-  const [totalPolls, setTotalPolls] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [filters, setFilters] = useState({
-    status: "all",
-    sortBy: "newest",
-  });
-
-  // Debounce search query
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 300); // 300ms delay
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  // Clear search function
-  const clearSearch = () => {
-    setSearchQuery("");
-    setDebouncedSearchQuery("");
-  };
-
-  // Fetch polls from API
-  useEffect(() => {
-    const fetchPolls = async () => {
-      setLoading(true);
-      try {
-        const params = new URLSearchParams();
-        if (debouncedSearchQuery) params.append("search", debouncedSearchQuery);
-        if (filters.status) params.append("status", filters.status);
-        if (filters.sortBy) params.append("sortBy", filters.sortBy);
-
-        const response = await fetch(`/api/polls?${params.toString()}`);
-        const result = await response.json();
-
-        if (result.success) {
-          setPolls(result.polls);
-          setTotalPolls(result.totalPolls);
-        } else {
-          console.error("Failed to fetch polls:", result.message);
-        }
-      } catch (error) {
-        console.error("Error fetching polls:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPolls();
-  }, [debouncedSearchQuery, filters]);
+  const {
+    polls,
+    totalPolls,
+    loading,
+    searchQuery,
+    setSearchQuery,
+    filters,
+    setFilters,
+    clearSearch,
+    debouncedSearchQuery,
+  } = usePolls();
 
   if (loading) {
     return (
