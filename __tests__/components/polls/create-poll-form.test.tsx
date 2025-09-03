@@ -14,13 +14,24 @@ jest.mock("@/components/ui/card", () => ({
   CardHeader: (props) => <div {...props} />,
 }));
 jest.mock("@/components/ui/badge", () => ({ Badge: (props) => <span {...props} /> }));
-jest.mock("@/components/ui/checkbox", () => ({ Checkbox: (props) => <input type="checkbox" {...props} /> }));
+jest.mock("@/components/ui/checkbox", () => ({
+  Checkbox: ({ checked, onCheckedChange, ...props }) => (
+    <input
+      type="checkbox"
+      {...props}
+      checked={checked}
+      onChange={(e) => onCheckedChange && onCheckedChange(e.target.checked)}
+    />
+  ),
+}));
 jest.mock("@/components/ui/select", () => ({
-  Select: (props) => <div {...props} />,
-  SelectContent: (props) => <div {...props} />,
-  SelectItem: (props) => <div {...props} />,
-  SelectTrigger: (props) => <button {...props} />,
-  SelectValue: (props) => <span {...props} />,
+  Select: ({ children, onValueChange, defaultValue }) => (
+    <div data-testid="select" onClick={() => onValueChange && onValueChange('mock-value')}>{children}</div>
+  ),
+  SelectContent: ({ children }) => <div>{children}</div>,
+  SelectItem: ({ children, value }) => <div data-value={value}>{children}</div>,
+  SelectTrigger: ({ children }) => <button type="button">{children}</button>,
+  SelectValue: ({ placeholder }) => <span>{placeholder}</span>,
 }));
 jest.mock("@/components/ui/form", () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
