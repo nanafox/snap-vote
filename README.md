@@ -102,10 +102,40 @@ bun start
 
 ### Authentication
 
-The app provides user authentication with login, registration, and profile management through Supabase's authentication services.
+The app provides user authentication with login, registration, and profile management through Supabase's authentication services. All sensitive routes are protected and require a valid session.
 
 ### Dashboard
 
 Once logged in, users can access their dashboard to:
+
 - View all created polls
-- Track
+- Track real-time poll results and analytics
+- Create new polls using a step-by-step form
+- Manage existing polls (edit, delete, share)
+
+### Usage Examples
+
+#### Creating a Poll
+
+1. From the dashboard, click "Create Poll".
+2. Fill in the poll title, description, and add your questions.
+3. Choose the question type (e.g., single-choice, multiple-choice).
+4. Save the poll to make it live.
+
+#### Voting on a Poll
+
+1. Access the poll via its unique shareable link.
+2. Select your desired option(s).
+3. Submit your vote to see the results in real-time.
+
+## Testing
+
+This project uses Jest and React Testing Library for unit and integration testing.
+
+To run the tests, use the following command:
+
+```bash
+npm test
+```
+
+Test files are located in the `__tests__` directory and mirror the structure of the `app` directory.

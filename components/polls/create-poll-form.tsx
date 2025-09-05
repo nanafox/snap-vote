@@ -18,6 +18,10 @@ import { Plus, Trash2, GripVertical, CheckSquare, Circle, Type, Star, Eye, EyeOf
 import { useToast } from "@/hooks/use-toast";
 import type { QuestionType } from "@/types";
 
+/**
+ * Defines the validation schema for a single question in a poll.
+ * Ensures that question text is provided and that choice-based questions have at least two options.
+ */
 const questionSchema = z
   .object({
     text: z.string().min(1, "Question text is required"),
@@ -28,7 +32,7 @@ const questionSchema = z
   })
   .refine(
     (data) => {
-      // Validate that choice questions have at least 2 options
+      // Choice questions (single or multiple) must have at least 2 options.
       if (data.type === "single-choice" || data.type === "multiple-choice") {
         return data.options && data.options.length >= 2;
       }
@@ -36,10 +40,14 @@ const questionSchema = z
     },
     {
       message: "Choice questions require at least 2 options",
-      path: ["options"],
+      path: ["options"], // Specify the validation error path
     }
   );
 
+/**
+ * Defines the validation schema for the entire poll form.
+ * Ensures a title is present and that there is at least one question.
+ */
 const pollSchema = z.object({
   title: z.string().min(1, "Poll title is required"),
   description: z.string().optional(),
@@ -50,6 +58,7 @@ const pollSchema = z.object({
 
 type PollFormData = z.infer<typeof pollSchema>;
 
+// Maps question types to their corresponding Lucide icon components.
 const questionTypeIcons = {
   "single-choice": Circle,
   "multiple-choice": CheckSquare,
@@ -57,6 +66,7 @@ const questionTypeIcons = {
   rating: Star,
 };
 
+// Maps question types to human-readable labels.
 const questionTypeLabels = {
   "single-choice": "Single Choice",
   "multiple-choice": "Multiple Choice",
@@ -64,6 +74,11 @@ const questionTypeLabels = {
   rating: "Rating Scale",
 };
 
+/**
+ * `CreatePollForm` is a client-side component that provides a dynamic form
+ * for creating new polls. It supports adding/removing questions and options,
+ * different question types, and validation using `react-hook-form` and `zod`.
+ */
 export function CreatePollForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -87,17 +102,21 @@ export function CreatePollForm() {
     },
   });
 
+  // `useFieldArray` manages the dynamic list of questions in the form.
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "questions",
   });
 
+  /**
+   * Handles the form submission, sends the poll data to the API,
+   * and manages success/error feedback.
+   * @param {PollFormData} data - The validated form data.
+   */
   const onSubmit = async (data: PollFormData) => {
     setIsSubmitting(true);
     try {
-      console.log("Creating poll:", data);
-
-      // Call the API to create the poll
+      // Send a POST request to the API endpoint to create the poll.
       const response = await fetch("/api/polls", {
         method: "POST",
         headers: {
@@ -112,20 +131,16 @@ export function CreatePollForm() {
         throw new Error(result.message || "Failed to create poll");
       }
 
-      console.log("Poll created successfully:", result.poll);
-
-      // Show success message
+      // Display a success notification.
       toast({
         title: "Success!",
         description: "Your poll has been created successfully.",
       });
 
-      // Redirect to dashboard
+      // Redirect the user to the polls dashboard.
       router.push("/dashboard/polls");
     } catch (error) {
-      console.error("Error creating poll:", error);
-
-      // Show error message
+      // Display an error notification if the submission fails.
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to create poll. Please try again.",
@@ -136,9 +151,11 @@ export function CreatePollForm() {
     }
   };
 
+  /**
+   * Adds a new question to the form, with a limit of 20 questions.
+   */
   const addQuestion = () => {
     if (fields.length < 20) {
-      // Limit to 20 questions max
       append({
         text: "",
         type: "single-choice",
@@ -148,20 +165,32 @@ export function CreatePollForm() {
     }
   };
 
+  /**
+   * Removes a question from the form, ensuring at least one question remains.
+   * @param {number} index - The index of the question to remove.
+   */
   const removeQuestion = (index: number) => {
     if (fields.length > 1) {
       remove(index);
     }
   };
 
+  /**
+   * Adds a new option to a choice-based question, with a limit of 10 options.
+   * @param {number} questionIndex - The index of the question to add an option to.
+   */
   const addOption = (questionIndex: number) => {
     const currentOptions = form.getValues(`questions.${questionIndex}.options`) || [];
     if (currentOptions.length < 10) {
-      // Limit to 10 options max
       form.setValue(`questions.${questionIndex}.options`, [...currentOptions, ""]);
     }
   };
 
+  /**
+   * Removes an option from a choice-based question, ensuring at least two options remain.
+   * @param {number} questionIndex - The index of the question.
+   * @param {number} optionIndex - The index of the option to remove.
+   */
   const removeOption = (questionIndex: number, optionIndex: number) => {
     const currentOptions = form.getValues(`questions.${questionIndex}.options`) || [];
     if (currentOptions.length > 2) {
@@ -173,7 +202,7 @@ export function CreatePollForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {/* Poll Basic Information */}
+        {/* Poll Basic Information: Title, Description, Expiration, and Visibility */}
         <div className="space-y-6">
           <FormField
             control={form.control}
@@ -260,7 +289,7 @@ export function CreatePollForm() {
           </div>
         </div>
 
-        {/* Questions Section */}
+        {/* Dynamic Questions Section */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium">Questions</h3>
@@ -331,17 +360,17 @@ export function CreatePollForm() {
                         <Select
                           onValueChange={(value) => {
                             field.onChange(value);
-                            // Reset options when changing to/from choice types
+                            // When changing question type, reset options accordingly.
                             const newType = value as QuestionType;
                             const currentOptions = form.getValues(`questions.${questionIndex}.options`) || [];
 
                             if (newType === "single-choice" || newType === "multiple-choice") {
-                              // Ensure we have at least 2 empty options for choice questions
+                              // Ensure at least two empty options for choice-based questions.
                               if (currentOptions.length < 2) {
                                 form.setValue(`questions.${questionIndex}.options`, ["", ""]);
                               }
                             } else {
-                              // Clear options for non-choice questions
+                              // Clear options for non-choice questions (text, rating).
                               form.setValue(`questions.${questionIndex}.options`, []);
                             }
                           }}
@@ -371,7 +400,7 @@ export function CreatePollForm() {
                     )}
                   />
 
-                  {/* Options for choice-based questions */}
+                  {/* Dynamically render options for choice-based questions */}
                   {(questionType === "single-choice" || questionType === "multiple-choice") && (
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
@@ -424,6 +453,7 @@ export function CreatePollForm() {
                     </div>
                   )}
 
+                  {/* Informational text for rating questions */}
                   {questionType === "rating" && (
                     <div className="bg-muted/50 rounded-lg p-4">
                       <p className="text-muted-foreground text-sm">
@@ -432,6 +462,7 @@ export function CreatePollForm() {
                     </div>
                   )}
 
+                  {/* Informational text for text-based questions */}
                   {questionType === "text" && (
                     <div className="bg-muted/50 rounded-lg p-4">
                       <p className="text-muted-foreground text-sm">
@@ -458,7 +489,7 @@ export function CreatePollForm() {
           })}
         </div>
 
-        {/* Submit Section */}
+        {/* Form Submission Buttons */}
         <div className="flex items-center justify-between border-t pt-6">
           <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
