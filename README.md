@@ -1,5 +1,7 @@
 # SnapVote
 
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/nanafox/snap-vote?utm_source=oss&utm_medium=github&utm_campaign=nanafox%2Fsnap-vote&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+
 SnapVote is a modern, fast, and user-friendly polling application built with Next.js. Create, share, and analyze polls with real-time results and beautiful visualizations.
 
 ## Features
