@@ -14,13 +14,16 @@ import {
 import { useAuth } from "@/contexts/auth";
 import { createClient } from "@/lib/supabase/client";
 import { ThemeToggleButton } from "./theme-toggle-button";
+import { useRouter } from "next/navigation";
 
 export function Header() {
   const { session } = useAuth();
   const supabase = createClient();
+  const router = useRouter();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    router.push("/");
   };
 
   return (

@@ -63,10 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setSession(session);
       setLoading(false);
 
-      // Redirect to the home page when the user signs out.
-      if (event === "SIGNED_OUT") {
-        router.push("/");
-      }
+      
     });
 
     // Clean up the subscription when the component unmounts.

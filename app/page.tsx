@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { BarChart3, Users, Zap, Shield, ArrowRight, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/auth";
+import { ThemeToggleButton } from "@/components/layout/theme-toggle-button";
 
 export default function Home() {
   const { session } = useAuth();
@@ -22,6 +23,7 @@ export default function Home() {
             </div>
           </Link>
           <nav className="flex items-center space-x-4">
+            <ThemeToggleButton />
             {session ? (
               <>
                 <Link href="/dashboard">
