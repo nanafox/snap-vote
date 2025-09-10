@@ -151,13 +151,13 @@ export default function DashboardPage() {
                 polls.map((poll) => (
                   <div
                     key={poll.id}
-                    className="border-muted hover:border-primary/40 flex max-w-xs min-w-[260px] flex-1 flex-col justify-between rounded-lg border bg-white p-4 shadow-sm transition-shadow hover:shadow-lg"
+                    className="border-muted hover:border-primary/40 bg-background flex max-w-xs min-w-[260px] flex-1 flex-col justify-between rounded-lg border p-4 shadow-sm transition-shadow hover:shadow-lg"
                   >
                     <div className="mb-2">
                       <div className="mb-1 flex items-center gap-2">
-                        <span className="line-clamp-1 text-base font-semibold">{poll.title}</span>
+                        <span className="text-foreground line-clamp-1 text-base font-semibold">{poll.title}</span>
                         {poll.isActive && (
-                          <span className="ml-2 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                          <span className="ml-2 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900 dark:text-green-200">
                             Active
                           </span>
                         )}

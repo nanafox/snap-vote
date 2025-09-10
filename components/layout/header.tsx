@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/auth";
 import { createClient } from "@/lib/supabase/client";
+import { ThemeToggleButton } from "./theme-toggle-button";
 
 export function Header() {
   const { session } = useAuth();
@@ -27,6 +28,7 @@ export function Header() {
       <div className="flex items-center justify-end">
         {/* Right side actions */}
         <div className="flex items-center space-x-4">
+          <ThemeToggleButton />
           {/* Notifications */}
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />
