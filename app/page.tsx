@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { BarChart3, Users, Zap, Shield, ArrowRight, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/auth";
-import { ThemeToggleButton } from "@/components/layout/theme-toggle-button";
+import { PublicHeader } from "@/components/layout/public-header";
 
 export default function Home() {
   const { session } = useAuth();
@@ -14,41 +14,7 @@ export default function Home() {
   return (
     <div className="from-background via-background to-muted/20 min-h-screen bg-gradient-to-br">
       {/* Header */}
-      <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 border-b backdrop-blur">
-        <div className="container mx-auto flex items-center justify-between px-4 py-4">
-          <Link href="/">
-            <div className="flex items-center space-x-2">
-              <BarChart3 className="text-primary h-8 w-8" />
-              <span className="text-foreground text-2xl font-bold">SnapVote</span>
-            </div>
-          </Link>
-          <nav className="flex items-center space-x-4">
-            <ThemeToggleButton />
-            {session ? (
-              <>
-                <Link href="/dashboard">
-                  <Button variant="ghost">Dashboard</Button>
-                </Link>
-                <Link href="/dashboard/polls/create">
-                  <Button>
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Create Poll
-                  </Button>
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link href="/login">
-                  <Button variant="ghost">Login</Button>
-                </Link>
-                <Link href="/register">
-                  <Button>Sign Up</Button>
-                </Link>
-              </>
-            )}
-          </nav>
-        </div>
-      </header>
+      <PublicHeader />
 
       {/* Hero Section */}
       <section className="px-4 py-24">
